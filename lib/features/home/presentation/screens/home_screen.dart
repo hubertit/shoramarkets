@@ -20,6 +20,7 @@ import 'pay_screen.dart';
 import 'payouts_screen.dart';
 import 'search_screen.dart';
 import '../../../../shared/widgets/primary_button.dart';
+import '../../../investments/presentation/screens/investments_tab.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -30,6 +31,7 @@ class HomeScreen extends ConsumerWidget {
     final tabs = [
       const _DashboardTab(),
       const TransactionsScreen(),
+      const InvestmentsTab(),
       const ProfileTab(),
     ];
     return Scaffold(
@@ -49,6 +51,11 @@ class HomeScreen extends ConsumerWidget {
             icon: Icon(Icons.swap_horiz_outlined),
             selectedIcon: Icon(Icons.swap_horiz),
             label: 'Transactions',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.trending_up_outlined),
+            selectedIcon: Icon(Icons.trending_up),
+            label: 'Investments',
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outline),
