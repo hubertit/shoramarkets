@@ -160,7 +160,8 @@ class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
   }
 
   Future<void> signUpWithEmailAndPassword(
-    String name,
+    String firstName,
+    String lastName,
     String email,
     String phoneNumber,
     String password,
@@ -169,25 +170,79 @@ class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
     try {
       state = const AsyncValue.loading();
       final dio = AppConfig.dioInstance();
-      final payload = {
-        'name': name,
+      
+      // Prepare registration data as query parameters
+      final registrationData = {
+        'first_name': firstName,
+        'last_name': lastName,
         'email': email,
         'phone': phoneNumber,
         'password': password,
-        'role': role,
+        'password_confirmation': password, // Add password confirmation
       };
-      final response = await dio.post(
-        '${AppConfig.authEndpoint}/register',
-        data: payload,
-      );
+
+      // Try with JSON body first, then fallback to query parameters
+      Response response;
+      try {
+        response = await dio.post(
+          AppConfig.registerEndpoint,
+          data: registrationData,
+          options: Options(
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': '', // Add CSRF token if needed
+            },
+            validateStatus: (status) {
+              return status != null && status < 500; // Accept all status codes < 500
+            },
+          ),
+        );
+      } catch (e) {
+        // Fallback to query parameters if JSON body fails
+        response = await dio.post(
+          AppConfig.registerEndpoint,
+          queryParameters: registrationData,
+          options: Options(
+            headers: {
+              'Accept': 'application/json',
+              'X-CSRF-TOKEN': '', // Add CSRF token if needed
+            },
+            validateStatus: (status) {
+              return status != null && status < 500; // Accept all status codes < 500
+            },
+          ),
+        );
+      }
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Registration successful, do not log in automatically
-      state = const AsyncValue.data(null);
+        state = const AsyncValue.data(null);
       } else {
         throw Exception(response.data['message'] ?? 'Registration failed');
       }
     } on DioException catch (e) {
-      final errorMsg = e.response?.data['message'] ?? e.message ?? 'Registration failed';
+      String errorMsg = 'Registration failed';
+      
+      if (e.response?.data != null) {
+        final responseData = e.response!.data;
+        // Try to get message from response
+        if (responseData['message'] != null) {
+          errorMsg = responseData['message'];
+        } else if (responseData['errors'] != null) {
+          // Handle validation errors
+          final errors = responseData['errors'];
+          if (errors is Map && errors.isNotEmpty) {
+            final firstError = errors.values.first;
+            if (firstError is List && firstError.isNotEmpty) {
+              errorMsg = firstError.first;
+            }
+          }
+        }
+      } else {
+        errorMsg = e.message ?? 'Network error occurred';
+      }
+      
       state = AsyncValue.error(errorMsg, StackTrace.current);
       rethrow;
     } catch (e, stack) {
