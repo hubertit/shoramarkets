@@ -1,13 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AppConfig {
   static const String appName = 'Shora Markets';
   static const String appVersion = '1.0.0';
-  static const String apiBaseUrl = '';
+  static const String apiBaseUrl = 'https://shoramarkets.com/api';
 
   // API Endpoints
   static const String authEndpoint = '/auth';
+  static const String loginEndpoint = '/login';
+  static const String registerEndpoint = '/register';
+  static const String userEndpoint = '/user';
   static const String productsEndpoint = '/products';
   static const String categoriesEndpoint = '/categories';
   static const String ordersEndpoint = '/orders';
@@ -15,7 +19,7 @@ class AppConfig {
   static const String merchantsListEndpoint = 'merchants/list';
   static const String mapEndpoint = '/map';
   static const String notificationsEndpoint = '/notifications';
-  static const String profileUpdateEndpoint = 'profile/update';
+  static const String profileUpdateEndpoint = '/profile/update';
   static const String cartEndpoint = '/cart';
   static const String wishlistEndpoint = '/wishlist';
   static const String reviewsEndpoint = '/reviews';
@@ -107,6 +111,33 @@ class AppConfig {
         },
       ),
     );
+    
+    // Add authentication interceptor
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          // Add auth token if available
+          final prefs = await SharedPreferences.getInstance();
+          final token = prefs.getString(authTokenKey);
+          if (token != null && token.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          handler.next(options);
+        },
+        onError: (error, handler) async {
+          // Handle 401 errors (unauthorized)
+          if (error.response?.statusCode == 401) {
+            // Clear stored auth data
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.remove(authTokenKey);
+            await prefs.setBool(isLoggedInKey, false);
+          }
+          handler.next(error);
+        },
+      ),
+    );
+    
+    // Add logging interceptor
     dio.interceptors.add(
       LogInterceptor(
         request: true,

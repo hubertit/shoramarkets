@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/config/app_config.dart';
 import '../../../../core/theme/app_theme.dart';
-import 'lock_screen.dart';
+import '../../../home/presentation/screens/home_screen.dart';
+import '../providers/auth_provider.dart';
+import 'login_screen.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -21,14 +23,26 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   Future<void> _checkAuthState() async {
     await Future.delayed(
-      Duration(milliseconds: AppConfig.splashDuration),
+      const Duration(milliseconds: AppConfig.splashDuration),
     );
     if (!mounted) return;
     
-    // Temporarily skip authentication and go directly to lock screen
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const LockScreen()),
-    );
+    // Check if user is already logged in
+    final isLoggedIn = await ref.read(authProvider.notifier).isUserLoggedIn();
+    
+    if (!mounted) return;
+    
+    if (isLoggedIn) {
+      // User is logged in, go to home screen
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    } else {
+      // User is not logged in, go to login screen
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+    }
   }
 
   @override
@@ -94,7 +108,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Powered by RWANDA ICT Chamber',
+                  'Powered by Shora Markets',
                   style: AppTheme.bodySmall.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppTheme.surfaceColor,
