@@ -10,7 +10,7 @@ import 'notifications_screen.dart';
 import 'settings_screen.dart';
 import '../../../../../core/theme/app_theme.dart';
 import '../../../merchant/presentation/screens/transactions_screen.dart';
-import '../../../merchant/presentation/screens/wallets_screen.dart' show WalletCard, WalletsScreen;
+import '../../../merchant/presentation/screens/wallets_screen.dart' show WalletCard;
 import '../../../../shared/widgets/transaction_item.dart';
 import '../../../../shared/models/transaction.dart';
 import 'package:d_chart/d_chart.dart';
@@ -20,7 +20,6 @@ import 'pay_screen.dart';
 import 'payouts_screen.dart';
 import 'search_screen.dart';
 import '../../../../shared/widgets/primary_button.dart';
-import '../../../chat/presentation/screens/chat_list_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -31,8 +30,6 @@ class HomeScreen extends ConsumerWidget {
     final tabs = [
       const _DashboardTab(),
       const TransactionsScreen(),
-      const WalletsScreen(), // Restore the merchant WalletsScreen as the tab
-      const ChatListScreen(),
       const ProfileTab(),
     ];
     return Scaffold(
@@ -52,16 +49,6 @@ class HomeScreen extends ConsumerWidget {
             icon: Icon(Icons.swap_horiz_outlined),
             selectedIcon: Icon(Icons.swap_horiz),
             label: 'Transactions',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.account_balance_wallet_outlined),
-            selectedIcon: Icon(Icons.account_balance_wallet),
-            label: 'Wallets',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.chat_bubble_outline),
-            selectedIcon: Icon(Icons.chat_bubble),
-            label: 'Chat',
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outline),
