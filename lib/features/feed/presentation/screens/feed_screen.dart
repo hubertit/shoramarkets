@@ -38,19 +38,6 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
-      appBar: AppBar(
-        backgroundColor: AppTheme.surfaceColor,
-        elevation: 0,
-        centerTitle: false,
-        automaticallyImplyLeading: false,
-            title: Text(
-              'Investment Opportunities',
-              style: AppTheme.titleMedium.copyWith(
-                color: AppTheme.primaryColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-      ),
       body: RefreshIndicator(
         onRefresh: () => ref.read(feedProvider.notifier).refreshFeed(),
         child: Consumer(

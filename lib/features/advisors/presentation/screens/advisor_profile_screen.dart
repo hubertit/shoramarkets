@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../domain/models/broker.dart';
+import '../../domain/models/advisor.dart';
 
-class BrokerProfileScreen extends ConsumerStatefulWidget {
-  final Broker broker;
+class AdvisorProfileScreen extends ConsumerStatefulWidget {
+  final Advisor advisor;
 
-  const BrokerProfileScreen({
+  const AdvisorProfileScreen({
     super.key,
-    required this.broker,
+    required this.advisor,
   });
 
   @override
-  ConsumerState<BrokerProfileScreen> createState() => _BrokerProfileScreenState();
+  ConsumerState<AdvisorProfileScreen> createState() => _AdvisorProfileScreenState();
 }
 
-class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
+class _AdvisorProfileScreenState extends ConsumerState<AdvisorProfileScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isFollowing = false;
@@ -45,7 +45,7 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          widget.broker.name,
+          widget.advisor.name,
           style: AppTheme.titleMedium.copyWith(
             fontWeight: FontWeight.w600,
             color: AppTheme.textPrimaryColor,
@@ -84,7 +84,7 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
                 labelStyle: AppTheme.bodySmall.copyWith(fontWeight: FontWeight.w600),
                 tabs: const [
                   Tab(text: 'Performance'),
-                  Tab(text: 'Deals'),
+                  Tab(text: 'Cases'),
                   Tab(text: 'About'),
                 ],
               ),
@@ -96,7 +96,7 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
               controller: _tabController,
               children: [
                 _buildPerformanceTab(),
-                _buildDealsTab(),
+                _buildCasesTab(),
                 _buildAboutTab(),
               ],
             ),
@@ -118,14 +118,14 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
                 radius: 50,
                 backgroundColor: AppTheme.primaryColor,
                 child: Text(
-                  widget.broker.name.substring(0, 1).toUpperCase(),
+                  widget.advisor.name.substring(0, 1).toUpperCase(),
                   style: AppTheme.titleMedium.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              if (widget.broker.isVerified)
+              if (widget.advisor.isVerified)
                 Positioned(
                   bottom: 0,
                   right: 0,
@@ -152,7 +152,7 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.broker.name,
+                  widget.advisor.name,
                   style: AppTheme.titleMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: AppTheme.textPrimaryColor,
@@ -160,7 +160,7 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  widget.broker.specialization,
+                  widget.advisor.specialization,
                   style: AppTheme.bodyMedium.copyWith(
                     color: AppTheme.primaryColor,
                     fontWeight: FontWeight.w600,
@@ -176,7 +176,7 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      widget.broker.location,
+                      widget.advisor.location,
                       style: AppTheme.bodyMedium.copyWith(
                         color: AppTheme.textSecondaryColor,
                       ),
@@ -194,7 +194,7 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      widget.broker.rating.toString(),
+                      widget.advisor.rating.toString(),
                       style: AppTheme.bodyMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: AppTheme.textPrimaryColor,
@@ -202,7 +202,7 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '(${widget.broker.totalReviews} reviews)',
+                      '(${widget.advisor.totalReviews} reviews)',
                       style: AppTheme.bodySmall.copyWith(
                         color: AppTheme.textSecondaryColor,
                       ),
@@ -226,9 +226,9 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildStatItem('Investments', widget.broker.totalInvestments.toString()),
-              _buildStatItem('Success Rate', '${widget.broker.successRate.toStringAsFixed(1)}%'),
-              _buildStatItem('Clients', widget.broker.clientsCount.toString()),
+              _buildStatItem('Clients', widget.advisor.totalClients.toString()),
+              _buildStatItem('Success Rate', '${widget.advisor.successRate.toStringAsFixed(1)}%'),
+              _buildStatItem('Experience', widget.advisor.experience),
             ],
           ),
           const SizedBox(height: AppTheme.spacing16),
@@ -322,7 +322,7 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'About ${widget.broker.name}',
+            'About ${widget.advisor.name}',
             style: AppTheme.titleMedium.copyWith(
               fontWeight: FontWeight.w600,
               color: AppTheme.textPrimaryColor,
@@ -330,7 +330,7 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
           ),
           const SizedBox(height: AppTheme.spacing8),
           Text(
-            widget.broker.bio,
+            widget.advisor.bio,
             style: AppTheme.bodySmall.copyWith(
               color: AppTheme.textPrimaryColor,
               height: 1.4,
@@ -372,21 +372,21 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
           children: [
             Expanded(
               child: _buildPerformanceCard(
-                title: 'Total Investments',
-                value: widget.broker.totalInvestments.toString(),
-                subtitle: 'Deals completed',
-                icon: Icons.trending_up,
-                color: Colors.green,
+                title: 'Total Clients',
+                value: widget.advisor.totalClients.toString(),
+                subtitle: 'Clients advised',
+                icon: Icons.people,
+                color: Colors.blue,
               ),
             ),
             const SizedBox(width: AppTheme.spacing12),
             Expanded(
               child: _buildPerformanceCard(
                 title: 'Success Rate',
-                value: '${widget.broker.successRate.toStringAsFixed(1)}%',
-                subtitle: 'Deal success rate',
+                value: '${widget.advisor.successRate.toStringAsFixed(1)}%',
+                subtitle: 'Advisory success rate',
                 icon: Icons.check_circle,
-                color: Colors.blue,
+                color: Colors.green,
               ),
             ),
           ],
@@ -397,7 +397,7 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
             Expanded(
               child: _buildPerformanceCard(
                 title: 'Avg Return',
-                value: '${widget.broker.averageReturn.toStringAsFixed(1)}%',
+                value: '${widget.advisor.averageReturn.toStringAsFixed(1)}%',
                 subtitle: 'Average return',
                 icon: Icons.percent,
                 color: Colors.orange,
@@ -406,10 +406,10 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
             const SizedBox(width: AppTheme.spacing12),
             Expanded(
               child: _buildPerformanceCard(
-                title: 'Total Value',
-                value: _formatCurrency(widget.broker.totalInvestmentValue),
-                subtitle: 'RWF invested',
-                icon: Icons.monetization_on,
+                title: 'Satisfaction',
+                value: '${widget.advisor.clientSatisfaction.toStringAsFixed(1)}/5.0',
+                subtitle: 'Client satisfaction',
+                icon: Icons.star,
                 color: Colors.purple,
               ),
             ),
@@ -457,13 +457,13 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
             ],
           ),
           const SizedBox(height: AppTheme.spacing12),
-            Text(
-              value,
-              style: AppTheme.titleMedium.copyWith(
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
+          Text(
+            value,
+            style: AppTheme.titleMedium.copyWith(
+              fontWeight: FontWeight.bold,
+              color: color,
             ),
+          ),
           const SizedBox(height: AppTheme.spacing4),
           Text(
             title,
@@ -506,22 +506,22 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
           child: Column(
             children: [
               _buildChartItem(
-                title: 'Investment Performance',
-                percentage: widget.broker.successRate.toInt(),
+                title: 'Advisory Success Rate',
+                percentage: widget.advisor.successRate.toInt(),
                 color: Colors.green,
-                description: 'Deal success rate',
+                description: 'Successful advisory cases',
               ),
               const SizedBox(height: AppTheme.spacing16),
               _buildChartItem(
                 title: 'Client Satisfaction',
-                percentage: (widget.broker.clientSatisfaction * 20).toInt(),
+                percentage: (widget.advisor.clientSatisfaction * 20).toInt(),
                 color: Colors.blue,
                 description: 'Average client rating',
               ),
               const SizedBox(height: AppTheme.spacing16),
               _buildChartItem(
                 title: 'Return Performance',
-                percentage: (widget.broker.averageReturn / 2).toInt(),
+                percentage: (widget.advisor.averageReturn / 2).toInt(),
                 color: Colors.orange,
                 description: 'Average return rate',
               ),
@@ -588,12 +588,12 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
     );
   }
 
-  Widget _buildDealsTab() {
+  Widget _buildCasesTab() {
     return ListView.builder(
       padding: const EdgeInsets.all(AppTheme.spacing16),
-      itemCount: widget.broker.recentDeals.length,
+      itemCount: widget.advisor.recentCases.length,
       itemBuilder: (context, index) {
-        final deal = widget.broker.recentDeals[index];
+        final case_ = widget.advisor.recentCases[index];
         return Container(
           margin: const EdgeInsets.only(bottom: AppTheme.spacing16),
           padding: const EdgeInsets.all(AppTheme.spacing16),
@@ -612,7 +612,7 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
                 children: [
                   Expanded(
                     child: Text(
-                      deal.companyName,
+                      case_.companyName,
                       style: AppTheme.titleMedium.copyWith(
                         fontWeight: FontWeight.w600,
                         color: AppTheme.textPrimaryColor,
@@ -625,11 +625,11 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
                       vertical: AppTheme.spacing4,
                     ),
                     decoration: BoxDecoration(
-                      color: deal.status == 'Active' ? Colors.green : Colors.blue,
+                      color: case_.status == 'Active' ? Colors.green : Colors.blue,
                       borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
                     ),
                     child: Text(
-                      deal.status,
+                      case_.status,
                       style: AppTheme.bodySmall.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
@@ -640,7 +640,7 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
               ),
               const SizedBox(height: AppTheme.spacing8),
               Text(
-                deal.industry,
+                case_.industry,
                 style: AppTheme.bodyMedium.copyWith(
                   color: AppTheme.primaryColor,
                   fontWeight: FontWeight.w600,
@@ -650,16 +650,16 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
               Row(
                 children: [
                   Expanded(
-                    child: _buildDealStat(
+                    child: _buildCaseStat(
                       'Investment',
-                      _formatCurrency(deal.investmentAmount),
+                      _formatCurrency(case_.investmentAmount),
                       Icons.monetization_on,
                     ),
                   ),
                   Expanded(
-                    child: _buildDealStat(
+                    child: _buildCaseStat(
                       'Expected Return',
-                      '${deal.expectedReturn.toStringAsFixed(1)}%',
+                      '${case_.expectedReturn.toStringAsFixed(1)}%',
                       Icons.trending_up,
                     ),
                   ),
@@ -667,7 +667,7 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
               ),
               const SizedBox(height: AppTheme.spacing8),
               Text(
-                'Date: ${_formatDate(deal.date)}',
+                'Date: ${_formatDate(case_.date)}',
                 style: AppTheme.bodySmall.copyWith(
                   color: AppTheme.textSecondaryColor,
                 ),
@@ -679,7 +679,7 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
     );
   }
 
-  Widget _buildDealStat(String label, String value, IconData icon) {
+  Widget _buildCaseStat(String label, String value, IconData icon) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -720,26 +720,26 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
           _buildInfoCard(
             'Professional Information',
             [
-              _buildInfoRow('Experience', widget.broker.experience),
-              _buildInfoRow('Education', widget.broker.education),
-              _buildInfoRow('Languages', widget.broker.languages),
-              _buildInfoRow('Join Date', widget.broker.joinDate),
+              _buildInfoRow('Experience', widget.advisor.experience),
+              _buildInfoRow('Education', widget.advisor.education),
+              _buildInfoRow('Languages', widget.advisor.languages),
+              _buildInfoRow('Join Date', widget.advisor.joinDate),
             ],
           ),
           const SizedBox(height: AppTheme.spacing16),
           _buildInfoCard(
             'Performance Metrics',
             [
-              _buildInfoRow('Total Investments', widget.broker.totalInvestments.toString()),
-              _buildInfoRow('Success Rate', '${widget.broker.successRate.toStringAsFixed(1)}%'),
-              _buildInfoRow('Average Return', '${widget.broker.averageReturn.toStringAsFixed(1)}%'),
-              _buildInfoRow('Client Satisfaction', '${widget.broker.clientSatisfaction.toStringAsFixed(1)}/5.0'),
+              _buildInfoRow('Total Clients', widget.advisor.totalClients.toString()),
+              _buildInfoRow('Success Rate', '${widget.advisor.successRate.toStringAsFixed(1)}%'),
+              _buildInfoRow('Average Return', '${widget.advisor.averageReturn.toStringAsFixed(1)}%'),
+              _buildInfoRow('Client Satisfaction', '${widget.advisor.clientSatisfaction.toStringAsFixed(1)}/5.0'),
             ],
           ),
           const SizedBox(height: AppTheme.spacing16),
           _buildInfoCard(
             'Certifications',
-            widget.broker.certifications.map((cert) => 
+            widget.advisor.certifications.map((cert) => 
               _buildCertificationItem(cert)
             ).toList(),
           ),
@@ -873,28 +873,28 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
             ),
             const SizedBox(height: AppTheme.spacing16),
             Text(
-              'Contact ${widget.broker.name}',
+              'Contact ${widget.advisor.name}',
               style: AppTheme.titleMedium.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppTheme.textPrimaryColor,
               ),
             ),
             const SizedBox(height: AppTheme.spacing24),
-            if (widget.broker.phone != null)
+            if (widget.advisor.phone != null)
               ListTile(
                 leading: const Icon(Icons.phone),
                 title: Text('Call'),
-                subtitle: Text(widget.broker.phone!),
+                subtitle: Text(widget.advisor.phone!),
                 onTap: () {
                   Navigator.pop(context);
                   // TODO: Implement call functionality
                 },
               ),
-            if (widget.broker.email != null)
+            if (widget.advisor.email != null)
               ListTile(
                 leading: const Icon(Icons.email),
                 title: Text('Email'),
-                subtitle: Text(widget.broker.email!),
+                subtitle: Text(widget.advisor.email!),
                 onTap: () {
                   Navigator.pop(context);
                   // TODO: Implement email functionality
@@ -943,7 +943,7 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
             ListTile(
               leading: const Icon(Icons.report),
               title: Text(
-                'Report Broker',
+                'Report Advisor',
                 style: AppTheme.bodyMedium.copyWith(
                   color: AppTheme.errorColor,
                 ),

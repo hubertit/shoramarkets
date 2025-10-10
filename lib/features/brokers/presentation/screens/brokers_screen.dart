@@ -45,144 +45,140 @@ class _BrokersScreenState extends ConsumerState<BrokersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
-      appBar: AppBar(
-        backgroundColor: AppTheme.surfaceColor,
-        elevation: 0,
-        centerTitle: false,
-        automaticallyImplyLeading: false,
-        title: Text(
-          'Investment Brokers',
-          style: AppTheme.titleMedium.copyWith(
-            color: AppTheme.primaryColor,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.filter_list),
-            onPressed: () {
-              _showFilterBottomSheet();
-            },
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Search Bar
-          Container(
-            padding: const EdgeInsets.all(AppTheme.spacing16),
-            color: AppTheme.surfaceColor,
-            child: TextField(
-              controller: _searchController,
-              onChanged: _onSearchChanged,
-              decoration: InputDecoration(
-                hintText: 'Search brokers by name, specialization, or location...',
-                hintStyle: AppTheme.bodyMedium.copyWith(
-                  color: AppTheme.textSecondaryColor,
-                ),
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          _onSearchChanged('');
-                        },
-                      )
-                    : null,
-                filled: true,
-                fillColor: AppTheme.backgroundColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
-                  borderSide: BorderSide(
-                    color: AppTheme.thinBorderColor,
-                    width: AppTheme.thinBorderWidth,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
-                  borderSide: BorderSide(
-                    color: AppTheme.thinBorderColor,
-                    width: AppTheme.thinBorderWidth,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
-                  borderSide: BorderSide(
-                    color: AppTheme.primaryColor,
-                    width: 2,
+      body: RefreshIndicator(
+        onRefresh: () => ref.read(brokersProvider.notifier).refreshBrokers(),
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            // Search Bar
+            SliverToBoxAdapter(
+              child: Container(
+                padding: const EdgeInsets.all(AppTheme.spacing16),
+                color: AppTheme.surfaceColor,
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: _onSearchChanged,
+                  decoration: InputDecoration(
+                    hintText: 'Search brokers by name, specialization, or location...',
+                    hintStyle: AppTheme.bodyMedium.copyWith(
+                      color: AppTheme.textSecondaryColor,
+                    ),
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: _searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              _searchController.clear();
+                              _onSearchChanged('');
+                            },
+                          )
+                        : null,
+                    filled: true,
+                    fillColor: AppTheme.backgroundColor,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
+                      borderSide: BorderSide(
+                        color: AppTheme.thinBorderColor,
+                        width: AppTheme.thinBorderWidth,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
+                      borderSide: BorderSide(
+                        color: AppTheme.thinBorderColor,
+                        width: AppTheme.thinBorderWidth,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
+                      borderSide: BorderSide(
+                        color: AppTheme.primaryColor,
+                        width: 2,
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          // Brokers List
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: () => ref.read(brokersProvider.notifier).refreshBrokers(),
-              child: Consumer(
-                builder: (context, ref, child) {
-                  final brokersState = ref.watch(brokersProvider);
+            // Brokers List
+            Consumer(
+              builder: (context, ref, child) {
+                final brokersState = ref.watch(brokersProvider);
 
-                  if (brokersState.isLoading && brokersState.brokers.isEmpty) {
-                    return SkeletonLoaders.brokersSkeleton(count: 5);
-                  }
+                if (brokersState.isLoading && brokersState.brokers.isEmpty) {
+                  return SliverToBoxAdapter(
+                    child: SkeletonLoaders.brokersSkeleton(count: 5),
+                  );
+                }
 
-                  if (brokersState.error != null && brokersState.brokers.isEmpty) {
-                    return Center(
-                      child: Text(
-                        'Error: ${brokersState.error}',
-                        style: AppTheme.bodyMedium.copyWith(color: AppTheme.errorColor),
+                if (brokersState.error != null && brokersState.brokers.isEmpty) {
+                  return SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppTheme.spacing32),
+                        child: Text(
+                          'Error: ${brokersState.error}',
+                          style: AppTheme.bodyMedium.copyWith(color: AppTheme.errorColor),
+                        ),
                       ),
-                    );
-                  }
+                    ),
+                  );
+                }
 
-                  if (brokersState.brokers.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.person_search,
-                            size: 64,
-                            color: AppTheme.textSecondaryColor,
-                          ),
-                          const SizedBox(height: AppTheme.spacing16),
-                          Text(
-                            'No brokers found',
-                            style: AppTheme.titleMedium.copyWith(
+                if (brokersState.brokers.isEmpty) {
+                  return SliverToBoxAdapter(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppTheme.spacing32),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.person_search,
+                              size: 64,
                               color: AppTheme.textSecondaryColor,
                             ),
-                          ),
-                          const SizedBox(height: AppTheme.spacing8),
-                          Text(
-                            'Try adjusting your search criteria',
-                            style: AppTheme.bodyMedium.copyWith(
-                              color: AppTheme.textSecondaryColor,
+                            const SizedBox(height: AppTheme.spacing16),
+                            Text(
+                              'No brokers found',
+                              style: AppTheme.titleMedium.copyWith(
+                                color: AppTheme.textSecondaryColor,
+                              ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: AppTheme.spacing8),
+                            Text(
+                              'Try adjusting your search criteria',
+                              style: AppTheme.bodyMedium.copyWith(
+                                color: AppTheme.textSecondaryColor,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    );
-                  }
+                    ),
+                  );
+                }
 
-                  return ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.all(AppTheme.spacing16),
-                    itemCount: brokersState.brokers.length + (brokersState.isLoading ? 1 : 0),
-                    itemBuilder: (context, index) {
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
                       if (index < brokersState.brokers.length) {
-                        return _buildBrokerCard(brokersState.brokers[index]);
-                      } else {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing16),
+                          child: _buildBrokerCard(brokersState.brokers[index]),
+                        );
+                      } else if (brokersState.isLoading) {
                         return SkeletonLoaders.brokersSkeleton(count: 3);
                       }
+                      return null;
                     },
-                  );
-                },
-              ),
+                    childCount: brokersState.brokers.length + (brokersState.isLoading ? 1 : 0),
+                  ),
+                );
+              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -434,48 +430,4 @@ class _BrokersScreenState extends ConsumerState<BrokersScreen> {
     }
   }
 
-  void _showFilterBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppTheme.surfaceColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppTheme.borderRadius16),
-        ),
-      ),
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(AppTheme.spacing16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: AppTheme.textSecondaryColor,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacing16),
-            Text(
-              'Filter Brokers',
-              style: AppTheme.titleMedium.copyWith(
-                fontWeight: FontWeight.w600,
-                color: AppTheme.textPrimaryColor,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacing24),
-            // Filter options would go here
-            Text(
-              'Filter options coming soon...',
-              style: AppTheme.bodyMedium.copyWith(
-                color: AppTheme.textSecondaryColor,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacing24),
-          ],
-        ),
-      ),
-    );
-  }
 }
