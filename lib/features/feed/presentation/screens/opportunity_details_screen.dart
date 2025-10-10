@@ -369,32 +369,22 @@ ${widget.opportunity.content ?? ''}
   }
 
   Widget _buildActionButtons() {
-    return Column(
+    return Row(
       children: [
-        PrimaryButton(
-          label: _isApplying ? 'Applying...' : 'Apply Now',
-          isLoading: _isApplying,
-          onPressed: _isApplying ? null : _handleApply,
+        Expanded(
+          child: SecondaryButton(
+            label: 'Contact Us',
+            onPressed: _handleContact,
+            icon: Icons.email,
+          ),
         ),
-        const SizedBox(height: AppTheme.spacing12),
-        Row(
-          children: [
-            Expanded(
-              child: SecondaryButton(
-                label: 'Contact Us',
-                onPressed: _handleContact,
-                icon: Icons.email,
-              ),
-            ),
-            const SizedBox(width: AppTheme.spacing12),
-            Expanded(
-              child: SecondaryButton(
-                label: 'Share',
-                onPressed: _handleShare,
-                icon: Icons.share,
-              ),
-            ),
-          ],
+        const SizedBox(width: AppTheme.spacing12),
+        Expanded(
+          child: PrimaryButton(
+            label: _isApplying ? 'Applying...' : 'Apply Now',
+            isLoading: _isApplying,
+            onPressed: _isApplying ? null : _handleApply,
+          ),
         ),
       ],
     );
