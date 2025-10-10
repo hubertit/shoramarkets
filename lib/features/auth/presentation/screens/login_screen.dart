@@ -23,6 +23,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
   bool _isLoading = false;
+  bool _isEmailLogin = true; // true for email, false for phone
 
   @override
   void dispose() {
@@ -41,10 +42,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
     try {
-      await ref.read(authProvider.notifier).signInWithEmailAndPassword(
-        _emailController.text.trim(),
-        _passwordController.text,
-      );
+      if (_isEmailLogin) {
+        await ref.read(authProvider.notifier).signInWithEmailAndPassword(
+          _emailController.text.trim(),
+          _passwordController.text,
+        );
+      } else {
+        await ref.read(authProvider.notifier).signInWithPhoneAndPassword(
+          _emailController.text.trim(),
+          _passwordController.text,
+        );
+      }
       final user = ref.read(authProvider).value;
       if (mounted && user != null) {
         showIntentionSnackBar(
@@ -61,7 +69,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         final backendMsg = e.response?.data['message'] ?? e.message;
         errorMessage += backendMsg ?? 'Please check your credentials and try again.';
       } else if (e.toString().contains('Invalid email/phone or password')) {
-        errorMessage += 'Please check your email/phone number and password and try again.';
+        errorMessage += 'Please check your ${_isEmailLogin ? 'email' : 'phone number'} and password and try again.';
       } else if (e.toString().contains('No registered user found')) {
         errorMessage += 'No account found with these credentials. Please register first.';
       } else if (e.toString().contains('network')) {
@@ -123,19 +131,93 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: AppTheme.spacing32),
-                  // Email Field
+                  // Login Method Toggle
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.surfaceColor,
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
+                      border: Border.all(color: AppTheme.thinBorderColor),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _isEmailLogin = true;
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing12),
+                              decoration: BoxDecoration(
+                                color: _isEmailLogin ? AppTheme.primaryColor : Colors.transparent,
+                                borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
+                              ),
+                              child: Text(
+                                'Email',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: _isEmailLogin ? Colors.white : AppTheme.textPrimaryColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _isEmailLogin = false;
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing12),
+                              decoration: BoxDecoration(
+                                color: !_isEmailLogin ? AppTheme.primaryColor : Colors.transparent,
+                                borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
+                              ),
+                              child: Text(
+                                'Phone',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: !_isEmailLogin ? Colors.white : AppTheme.textPrimaryColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacing16),
+                  // Email/Phone Field
                   TextFormField(
                     controller: _emailController,
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                      labelText: 'Phone Number or Email',
-                      hintText: '',
-                      prefixIcon: Icon(Icons.phone),
+                    keyboardType: _isEmailLogin ? TextInputType.emailAddress : TextInputType.phone,
+                    textInputAction: TextInputAction.next,
+                    textCapitalization: _isEmailLogin ? TextCapitalization.none : TextCapitalization.none,
+                    autocorrect: !_isEmailLogin, // Disable autocorrect for email
+                    enableSuggestions: !_isEmailLogin, // Disable suggestions for email
+                    decoration: InputDecoration(
+                      labelText: _isEmailLogin ? 'Email Address' : 'Phone Number',
+                      hintText: _isEmailLogin ? 'Enter your email' : 'Enter your phone number',
+                      prefixIcon: Icon(_isEmailLogin ? Icons.email_outlined : Icons.phone_outlined),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return '';
+                        return 'Please enter your ${_isEmailLogin ? 'email' : 'phone number'}';
                       }
+                      if (_isEmailLogin) {
+                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                          return 'Please enter a valid email address';
+                        }
+                      } else {
+                          if (!RegExp(r'^[0-9+\-\s()]+$').hasMatch(value)) {
+                            return 'Please enter a valid phone number';
+                          }
+                        }
                       return null;
                     },
                   ),
@@ -144,6 +226,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   TextFormField(
                     controller: _passwordController,
                     obscureText: !_isPasswordVisible,
+                    keyboardType: TextInputType.visiblePassword,
+                    textInputAction: TextInputAction.done,
+                    textCapitalization: TextCapitalization.none,
+                    autocorrect: false,
+                    enableSuggestions: false,
                     decoration: InputDecoration(
                       labelText: 'Password',
                       prefixIcon: const Icon(Icons.lock_outline),

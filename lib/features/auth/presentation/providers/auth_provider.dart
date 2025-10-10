@@ -60,20 +60,16 @@ class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
     }
   }
 
-  Future<void> signInWithEmailAndPassword(String emailOrPhone, String password) async {
+  Future<void> signInWithEmailAndPassword(String email, String password) async {
     try {
       state = const AsyncValue.loading();
       final dio = AppConfig.dioInstance();
       
-      // Prepare login data
+      // Prepare login data for email
       final loginData = {
-        'email': emailOrPhone.contains('@') ? emailOrPhone : null,
-        'phone': emailOrPhone.contains('@') ? null : emailOrPhone,
+        'email': email,
         'password': password,
       };
-      
-      // Remove null values
-      loginData.removeWhere((key, value) => value == null);
       
       final response = await dio.post(
         AppConfig.loginEndpoint,
@@ -102,7 +98,7 @@ class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
         final user = User(
           id: userData['id']?.toString() ?? '1',
           name: userData['name'] ?? '${userData['first_name'] ?? ''} ${userData['last_name'] ?? ''}'.trim(),
-          email: userData['email'] ?? emailOrPhone,
+          email: userData['email'] ?? email,
           password: '', // Don't store password
           role: userData['registration_type_id']?.toString() ?? 'user',
           createdAt: userData['created_at'] != null 
@@ -116,7 +112,102 @@ class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
           profileImg: userData['profile_photo'] ?? '',
           profileCover: '',
           coverImg: '',
-          phoneNumber: userData['phone'] ?? emailOrPhone,
+          phoneNumber: userData['phone'] ?? '',
+        );
+        
+        // Store user data and auth token
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(AppConfig.userFullDataKey, json.encode(user.toJson()));
+        await prefs.setString(AppConfig.authTokenKey, token);
+        await prefs.setBool(AppConfig.isLoggedInKey, true);
+        
+        state = AsyncValue.data(user);
+      } else {
+        throw Exception(response.data['message'] ?? 'Login failed');
+      }
+    } on DioException catch (e) {
+      String errorMsg = 'Login failed';
+      
+      if (e.response?.data != null) {
+        final responseData = e.response!.data;
+        // Try to get message from response
+        if (responseData['message'] != null) {
+          errorMsg = responseData['message'];
+        } else if (responseData['errors'] != null) {
+          // Handle validation errors
+          final errors = responseData['errors'];
+          if (errors is Map && errors.isNotEmpty) {
+            final firstError = errors.values.first;
+            if (firstError is List && firstError.isNotEmpty) {
+              errorMsg = firstError.first;
+            }
+          }
+        }
+      } else {
+        errorMsg = e.message ?? 'Network error occurred';
+      }
+      
+      state = AsyncValue.error(errorMsg, StackTrace.current);
+      rethrow;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      rethrow;
+    }
+  }
+
+  Future<void> signInWithPhoneAndPassword(String phone, String password) async {
+    try {
+      state = const AsyncValue.loading();
+      final dio = AppConfig.dioInstance();
+      
+      // Prepare login data for phone
+      final loginData = {
+        'phone': phone,
+        'password': password,
+      };
+      
+      final response = await dio.post(
+        AppConfig.loginEndpoint,
+        queryParameters: loginData,
+        options: Options(
+          headers: {
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': '', // Add CSRF token if needed
+          },
+          validateStatus: (status) {
+            return status != null && status < 500; // Accept all status codes < 500
+          },
+        ),
+      );
+      
+      if (response.statusCode == 200 && response.data != null) {
+        final responseData = response.data;
+        final userData = responseData['user'];
+        final token = responseData['token'];
+        
+        if (userData == null || token == null) {
+          throw Exception('Invalid response format');
+        }
+        
+        // Create user object from API response
+        final user = User(
+          id: userData['id']?.toString() ?? '1',
+          name: userData['name'] ?? '${userData['first_name'] ?? ''} ${userData['last_name'] ?? ''}'.trim(),
+          email: userData['email'] ?? '',
+          password: '', // Don't store password
+          role: userData['registration_type_id']?.toString() ?? 'user',
+          createdAt: userData['created_at'] != null 
+              ? DateTime.parse(userData['created_at']) 
+              : DateTime.now(),
+      lastLoginAt: DateTime.now(),
+          isActive: userData['admin_approved'] ?? true,
+      about: '',
+      address: '',
+          profilePicture: userData['profile_photo'] ?? '',
+          profileImg: userData['profile_photo'] ?? '',
+      profileCover: '',
+      coverImg: '',
+          phoneNumber: userData['phone'] ?? phone,
         );
         
         // Store user data and auth token
@@ -217,7 +308,7 @@ class AuthNotifier extends StateNotifier<AsyncValue<User?>> {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Registration successful, do not log in automatically
-        state = const AsyncValue.data(null);
+      state = const AsyncValue.data(null);
       } else {
         throw Exception(response.data['message'] ?? 'Registration failed');
       }

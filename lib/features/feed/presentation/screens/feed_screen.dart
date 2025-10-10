@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../providers/feed_provider.dart';
 import '../../domain/models/post.dart';
+import 'opportunity_details_screen.dart';
 
 class FeedScreen extends ConsumerStatefulWidget {
   const FeedScreen({super.key});
@@ -152,35 +153,45 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   }
 
   Widget _buildPostCard(Post post) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppTheme.spacing16),
-      decoration: const BoxDecoration(
-        color: AppTheme.surfaceColor,
-        border: Border(
-          bottom: BorderSide(
-            color: AppTheme.thinBorderColor,
-            width: 0.5,
+    return GestureDetector(
+      onTap: () {
+        if (post.isInvestmentOpportunity) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => OpportunityDetailsScreen(opportunity: post),
+            ),
+          );
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: AppTheme.spacing16),
+        decoration: const BoxDecoration(
+          color: AppTheme.surfaceColor,
+          border: Border(
+            bottom: BorderSide(
+              color: AppTheme.thinBorderColor,
+              width: 0.5,
+            ),
           ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Post Header
-          _buildPostHeader(post),
-          
-          // Post Image(s)
-          if (post.imageUrls.isNotEmpty)
-            _buildPostImages(post),
-          
-          // Investment Details (if it's an investment opportunity)
-          if (post.isInvestmentOpportunity)
-            _buildInvestmentDetails(post),
-          
-          // Post Actions (Like, Comment, Share)
-          _buildPostActions(post),
-          
-          // Post Stats
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Post Header
+            _buildPostHeader(post),
+            
+            // Post Image(s)
+            if (post.imageUrls.isNotEmpty)
+              _buildPostImages(post),
+            
+            // Investment Details (if it's an investment opportunity)
+            if (post.isInvestmentOpportunity)
+              _buildInvestmentDetails(post),
+            
+            // Post Actions (Like, Comment, Share)
+            _buildPostActions(post),
+            
+            // Post Stats
           _buildPostStats(post),
           
           // Post Caption
@@ -191,6 +202,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
           _buildTimePosted(post),
         ],
       ),
+    ),
     );
   }
 
