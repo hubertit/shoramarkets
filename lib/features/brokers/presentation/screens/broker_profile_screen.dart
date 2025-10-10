@@ -244,7 +244,7 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isFollowing ? AppTheme.surfaceColor : AppTheme.primaryColor,
-                    foregroundColor: _isFollowing ? AppTheme.textPrimaryColor : Colors.white,
+                    foregroundColor: Colors.white,
                     side: BorderSide(
                       color: _isFollowing ? AppTheme.thinBorderColor : AppTheme.primaryColor,
                       width: AppTheme.thinBorderWidth,
