@@ -41,73 +41,77 @@ class _AdvisorsScreenState extends ConsumerState<AdvisorsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
-      body: Column(
-        children: [
-          // Search Bar
-          Container(
-            padding: const EdgeInsets.all(AppTheme.spacing16),
-            color: AppTheme.surfaceColor,
-            child: TextField(
-              controller: _searchController,
-              onChanged: _onSearchChanged,
-              decoration: InputDecoration(
-                hintText: 'Search advisors by name, specialization, or location...',
-                hintStyle: AppTheme.bodyMedium.copyWith(
-                  color: AppTheme.textSecondaryColor,
-                ),
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          _onSearchChanged('');
-                        },
-                      )
-                    : null,
-                filled: true,
-                fillColor: AppTheme.backgroundColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
-                  borderSide: BorderSide(
-                    color: AppTheme.thinBorderColor,
-                    width: AppTheme.thinBorderWidth,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
-                  borderSide: BorderSide(
-                    color: AppTheme.thinBorderColor,
-                    width: AppTheme.thinBorderWidth,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
-                  borderSide: BorderSide(
-                    color: AppTheme.primaryColor,
-                    width: 2,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // Advisors List
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: () async {
-                // Refresh advisors
-              },
-              child: ListView.builder(
-                controller: _scrollController,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          // Refresh advisors
+        },
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            // Search Bar
+            SliverToBoxAdapter(
+              child: Container(
                 padding: const EdgeInsets.all(AppTheme.spacing16),
-                itemCount: 5, // Mock count
-                itemBuilder: (context, index) {
-                  return _buildAdvisorCard(index);
-                },
+                color: AppTheme.surfaceColor,
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: _onSearchChanged,
+                  decoration: InputDecoration(
+                    hintText: 'Search advisors by name, specialization, or location...',
+                    hintStyle: AppTheme.bodyMedium.copyWith(
+                      color: AppTheme.textSecondaryColor,
+                    ),
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: _searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: () {
+                              _searchController.clear();
+                              _onSearchChanged('');
+                            },
+                          )
+                        : null,
+                    filled: true,
+                    fillColor: AppTheme.backgroundColor,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
+                      borderSide: BorderSide(
+                        color: AppTheme.thinBorderColor,
+                        width: AppTheme.thinBorderWidth,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
+                      borderSide: BorderSide(
+                        color: AppTheme.thinBorderColor,
+                        width: AppTheme.thinBorderWidth,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
+                      borderSide: BorderSide(
+                        color: AppTheme.primaryColor,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-        ],
+            // Advisors List
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacing16),
+                    child: _buildAdvisorCard(index),
+                  );
+                },
+                childCount: 5, // Mock count
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
