@@ -94,7 +94,6 @@ class PhoneInputFieldState extends State<PhoneInputField> {
               decoration: InputDecoration(
                 labelText: widget.labelText ?? 'Phone Number',
                 prefixIcon: const Icon(Icons.phone_outlined),
-                hintText: 'Enter phone number',
               ),
               validator: widget.validator,
             ),

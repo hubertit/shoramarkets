@@ -202,7 +202,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     enableSuggestions: !_isEmailLogin, // Disable suggestions for email
                     decoration: InputDecoration(
                       labelText: _isEmailLogin ? 'Email Address' : 'Phone Number',
-                      hintText: _isEmailLogin ? 'Enter your email' : 'Enter your phone number',
                       prefixIcon: Icon(_isEmailLogin ? Icons.email_outlined : Icons.phone_outlined),
                     ),
                     validator: (value) {
