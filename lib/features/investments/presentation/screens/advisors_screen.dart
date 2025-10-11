@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../advisors/presentation/screens/advisor_profile_screen.dart';
+import '../../../advisors/domain/models/advisor.dart';
 
 class AdvisorsScreen extends ConsumerStatefulWidget {
   const AdvisorsScreen({super.key});
@@ -196,7 +198,7 @@ class _AdvisorsScreenState extends ConsumerState<AdvisorsScreen> {
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            // Navigate to advisor profile
+            _navigateToAdvisorProfile(advisor);
           },
           borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
           child: Padding(
@@ -397,7 +399,8 @@ class _AdvisorsScreenState extends ConsumerState<AdvisorsScreen> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          _showAdvisorProfile(advisor);
+                          Navigator.of(context).pop(); // Close the contact dialog
+                          _navigateToAdvisorProfile(advisor);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.primaryColor,
@@ -694,215 +697,6 @@ class _AdvisorsScreenState extends ConsumerState<AdvisorsScreen> {
     );
   }
 
-  void _showAdvisorProfile(Map<String, dynamic> advisor) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: AppTheme.surfaceColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
-          ),
-          child: Container(
-            constraints: const BoxConstraints(maxHeight: 600),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Header
-                Container(
-                  padding: const EdgeInsets.all(AppTheme.spacing16),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryColor.withOpacity(0.1),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(AppTheme.borderRadius16),
-                      topRight: Radius.circular(AppTheme.borderRadius16),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 25,
-                        backgroundColor: AppTheme.primaryColor,
-                        child: Text(
-                          (advisor['name'] as String).substring(0, 1).toUpperCase(),
-                          style: AppTheme.titleMedium.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: AppTheme.spacing12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              advisor['name'] as String,
-                              style: AppTheme.titleMedium.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: AppTheme.textPrimaryColor,
-                              ),
-                            ),
-                            Text(
-                              advisor['specialization'] as String,
-                              style: AppTheme.bodyMedium.copyWith(
-                                color: AppTheme.primaryColor,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        icon: const Icon(Icons.close),
-                        color: AppTheme.textSecondaryColor,
-                      ),
-                    ],
-                  ),
-                ),
-                // Content
-                Flexible(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(AppTheme.spacing16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildDetailSection(
-                          'Advisor Information',
-                          [
-                            _buildDetailRow('Specialization', advisor['specialization'] as String),
-                            _buildDetailRow('Location', advisor['location'] as String),
-                            _buildDetailRow('Experience', advisor['experience'] as String),
-                            _buildDetailRow('Clients Helped', advisor['clientsHelped'] as String),
-                            _buildDetailRow('Verification', advisor['isVerified'] ? 'Verified' : 'Not Verified'),
-                          ],
-                        ),
-                        const SizedBox(height: AppTheme.spacing16),
-                        _buildDetailSection(
-                          'Performance Stats',
-                          [
-                            _buildDetailRow('Success Rate', advisor['successRate'] as String),
-                          ],
-                        ),
-                        const SizedBox(height: AppTheme.spacing16),
-                        _buildDetailSection(
-                          'Certifications',
-                          [
-                            Wrap(
-                              spacing: AppTheme.spacing8,
-                              runSpacing: AppTheme.spacing4,
-                              children: (advisor['certifications'] as List<String>).map((cert) {
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: AppTheme.spacing8,
-                                    vertical: AppTheme.spacing4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.primaryColor.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-                                    border: Border.all(
-                                      color: AppTheme.primaryColor.withOpacity(0.3),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    cert,
-                                    style: AppTheme.bodySmall.copyWith(
-                                      color: AppTheme.primaryColor,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AppTheme.spacing16),
-                        _buildDetailSection(
-                          'About',
-                          [
-                            Text(
-                              '${advisor['name']} is a highly experienced investment advisor specializing in ${advisor['specialization']}. With ${advisor['experience']} of experience, they have helped ${advisor['clientsHelped']} clients achieve their financial goals.',
-                              style: AppTheme.bodyMedium.copyWith(
-                                color: AppTheme.textPrimaryColor,
-                                height: 1.4,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                // Footer
-                Container(
-                  padding: const EdgeInsets.all(AppTheme.spacing16),
-                  decoration: BoxDecoration(
-                    color: AppTheme.backgroundColor,
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(AppTheme.borderRadius16),
-                      bottomRight: Radius.circular(AppTheme.borderRadius16),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            _showContactDialog(advisor);
-                          },
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(
-                              color: AppTheme.thinBorderColor,
-                              width: AppTheme.thinBorderWidth,
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-                            ),
-                          ),
-                          child: Text(
-                            'Contact',
-                            style: AppTheme.bodyMedium.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: AppTheme.textPrimaryColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: AppTheme.spacing12),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primaryColor,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-                            ),
-                          ),
-                          child: Text(
-                            'Close',
-                            style: AppTheme.bodyMedium.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   Widget _buildDetailSection(String title, List<Widget> children) {
     return Column(
@@ -947,6 +741,65 @@ class _AdvisorsScreenState extends ConsumerState<AdvisorsScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _navigateToAdvisorProfile(Map<String, dynamic> advisorData) {
+    // Convert the mock data to Advisor model
+    final advisor = Advisor(
+      id: advisorData['name'] as String, // Using name as ID for mock data
+      name: advisorData['name'] as String,
+      specialization: advisorData['specialization'] as String,
+      location: advisorData['location'] as String,
+      experience: advisorData['experience'] as String,
+      clientsHelped: advisorData['clientsHelped'] as String,
+      successRate: advisorData['successRate'] as String,
+      isVerified: advisorData['isVerified'] as bool,
+      certifications: List<String>.from(advisorData['certifications'] as List<String>),
+      // Add default values for required fields
+      email: 'advisor@example.com',
+      phone: '+250 123 456 789',
+      bio: 'Experienced financial advisor with expertise in investment strategy and risk management.',
+      rating: 4.8,
+      totalReviews: 150,
+      followers: 1200,
+      following: 300,
+      profileImage: null,
+      coverImage: null,
+      isOnline: true,
+      lastActive: DateTime.now(),
+      languages: ['English', 'Kinyarwanda'],
+      education: ['MBA Finance', 'CFA Certification'],
+      workExperience: [
+        'Senior Investment Advisor at ABC Capital (2018-2023)',
+        'Financial Analyst at XYZ Bank (2015-2018)',
+      ],
+      achievements: [
+        'Top Performer 2022',
+        'Client Satisfaction Award 2021',
+      ],
+      socialLinks: {
+        'linkedin': 'https://linkedin.com/in/advisor',
+        'twitter': 'https://twitter.com/advisor',
+      },
+      availability: {
+        'monday': {'start': '09:00', 'end': '17:00'},
+        'tuesday': {'start': '09:00', 'end': '17:00'},
+        'wednesday': {'start': '09:00', 'end': '17:00'},
+        'thursday': {'start': '09:00', 'end': '17:00'},
+        'friday': {'start': '09:00', 'end': '17:00'},
+      },
+      consultationFee: 50000, // 50,000 RWF
+      currency: 'RWF',
+      isAvailable: true,
+      responseTime: '2 hours',
+      joinedDate: DateTime(2020, 1, 1),
+    );
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AdvisorProfileScreen(advisor: advisor),
       ),
     );
   }
