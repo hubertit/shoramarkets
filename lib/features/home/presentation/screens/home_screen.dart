@@ -19,7 +19,10 @@ import 'pay_screen.dart';
 import 'payouts_screen.dart';
 import 'search_screen.dart';
 import '../../../../shared/widgets/primary_button.dart';
-import '../../../investments/presentation/screens/investments_tab.dart';
+import '../../../feed/presentation/screens/feed_screen.dart';
+import '../../../brokers/presentation/screens/brokers_screen.dart';
+import '../../../investments/presentation/screens/advisors_screen.dart';
+import '../../../investments/presentation/screens/businesses_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -31,7 +34,6 @@ class HomeScreen extends ConsumerWidget {
       const _DashboardTab(),
       const _WalletsTab(),
       const TransactionsScreen(),
-      const InvestmentsTab(),
       const ProfileTab(),
     ];
     return Scaffold(
@@ -58,11 +60,6 @@ class HomeScreen extends ConsumerWidget {
             label: 'Transactions',
           ),
           NavigationDestination(
-            icon: Icon(Icons.trending_up_outlined),
-            selectedIcon: Icon(Icons.trending_up),
-            label: 'Investments',
-          ),
-          NavigationDestination(
             icon: Icon(Icons.person_outline),
             selectedIcon: Icon(Icons.person),
             label: 'Profile',
@@ -73,12 +70,32 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
-class _DashboardTab extends StatelessWidget {
+class _DashboardTab extends StatefulWidget {
   const _DashboardTab();
+
+  @override
+  State<_DashboardTab> createState() => _DashboardTabState();
+}
+
+class _DashboardTabState extends State<_DashboardTab> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
         backgroundColor: AppTheme.primaryColor,
         elevation: 0,
@@ -137,243 +154,30 @@ class _DashboardTab extends StatelessWidget {
             ],
           ),
         ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppTheme.spacing16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Welcome Section
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(AppTheme.spacing20),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppTheme.primaryColor,
-                    AppTheme.primaryColor.withOpacity(0.8),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Welcome to Shora Markets',
-                    style: AppTheme.titleMedium.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: AppTheme.spacing8),
-                  Text(
-                    'Your financial journey starts here',
-                    style: AppTheme.bodyMedium.copyWith(
-                      color: Colors.white.withOpacity(0.9),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacing24),
-            
-            // Quick Actions Grid
-            Text(
-              'Quick Actions',
-              style: AppTheme.titleMedium.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacing16),
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              crossAxisSpacing: AppTheme.spacing12,
-              mainAxisSpacing: AppTheme.spacing12,
-              childAspectRatio: 1.2,
-              children: [
-                _buildQuickActionCard(
-                  icon: Icons.account_balance_wallet,
-                  title: 'Wallets',
-                  subtitle: 'Manage your money',
-                  color: AppTheme.primaryColor,
-                  onTap: () {
-                    // Navigate to Wallets tab
-                    // This would need to be handled by the parent widget
-                  },
-                ),
-                _buildQuickActionCard(
-                  icon: Icons.swap_horiz,
-                  title: 'Transactions',
-                  subtitle: 'View history',
-                  color: AppTheme.successColor,
-                  onTap: () {
-                    // Navigate to Transactions tab
-                  },
-                ),
-                _buildQuickActionCard(
-                  icon: Icons.trending_up,
-                  title: 'Investments',
-                  subtitle: 'Grow your wealth',
-                  color: AppTheme.warningColor,
-                  onTap: () {
-                    // Navigate to Investments tab
-                  },
-                ),
-                _buildQuickActionCard(
-                  icon: Icons.person,
-                  title: 'Profile',
-                  subtitle: 'Account settings',
-                  color: AppTheme.errorColor,
-                  onTap: () {
-                    // Navigate to Profile tab
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.spacing24),
-            
-            // Recent Activity
-            Text(
-              'Recent Activity',
-              style: AppTheme.titleMedium.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: AppTheme.spacing16),
-            Container(
-              padding: const EdgeInsets.all(AppTheme.spacing16),
-              decoration: BoxDecoration(
-                color: AppTheme.surfaceColor,
-                borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
-                border: Border.all(color: AppTheme.thinBorderColor),
-              ),
-              child: Column(
-                children: [
-                  _buildActivityItem(
-                    icon: Icons.account_balance_wallet,
-                    title: 'Wallet Balance Updated',
-                    subtitle: 'Main Wallet - RWF 250,000',
-                    time: '2 hours ago',
-                    color: AppTheme.primaryColor,
-                  ),
-                  const Divider(height: AppTheme.spacing16),
-                  _buildActivityItem(
-                    icon: Icons.swap_horiz,
-                    title: 'Transaction Completed',
-                    subtitle: 'Payment received from Alice',
-                    time: '4 hours ago',
-                    color: AppTheme.successColor,
-                  ),
-                  const Divider(height: AppTheme.spacing16),
-                  _buildActivityItem(
-                    icon: Icons.trending_up,
-                    title: 'Investment Opportunity',
-                    subtitle: 'New advisor available',
-                    time: '1 day ago',
-                    color: AppTheme.warningColor,
-                  ),
-                ],
-              ),
-            ),
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Colors.white,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white.withOpacity(0.7),
+          labelStyle: AppTheme.bodySmall.copyWith(fontWeight: FontWeight.w600),
+          unselectedLabelStyle: AppTheme.bodySmall.copyWith(fontWeight: FontWeight.w400),
+          tabs: const [
+            Tab(text: 'Opportunities'),
+            Tab(text: 'Brokers'),
+            Tab(text: 'Advisors'),
+            Tab(text: 'Businesses'),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildQuickActionCard({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(AppTheme.spacing16),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
-          border: Border.all(color: color.withOpacity(0.3)),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: color, size: 32),
-            const SizedBox(height: AppTheme.spacing8),
-            Text(
-              title,
-              style: AppTheme.bodyMedium.copyWith(
-                fontWeight: FontWeight.w600,
-                color: color,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppTheme.spacing4),
-            Text(
-              subtitle,
-              style: AppTheme.bodySmall.copyWith(
-                color: color.withOpacity(0.8),
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+      body: TabBarView(
+        controller: _tabController,
+        children: const [
+          FeedScreen(),
+          BrokersScreen(),
+          AdvisorsScreen(),
+          BusinessesScreen(),
+        ],
       ),
-    );
-  }
-
-  Widget _buildActivityItem({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required String time,
-    required Color color,
-  }) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(AppTheme.spacing8),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-          ),
-          child: Icon(icon, color: color, size: 20),
-        ),
-        const SizedBox(width: AppTheme.spacing12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: AppTheme.bodyMedium.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: AppTheme.spacing4),
-              Text(
-                subtitle,
-                style: AppTheme.bodySmall.copyWith(
-                  color: AppTheme.textSecondaryColor,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Text(
-          time,
-          style: AppTheme.bodySmall.copyWith(
-            color: AppTheme.textSecondaryColor,
-          ),
-        ),
-      ],
     );
   }
 }
