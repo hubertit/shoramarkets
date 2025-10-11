@@ -149,7 +149,7 @@ class _LoansScreenState extends ConsumerState<LoansScreen>
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryColor,
-                    foregroundColor: AppTheme.surfaceColor,
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppTheme.spacing24,
                       vertical: AppTheme.spacing12,

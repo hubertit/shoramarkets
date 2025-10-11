@@ -272,7 +272,7 @@ class _LoanPaymentScreenState extends ConsumerState<LoanPaymentScreen> {
                   onPressed: _isProcessing ? null : _submitPayment,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primaryColor,
-                    foregroundColor: AppTheme.surfaceColor,
+                    foregroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
