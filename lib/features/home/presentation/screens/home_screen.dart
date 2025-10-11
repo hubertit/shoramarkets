@@ -7,7 +7,6 @@ import 'edit_profile_screen.dart';
 import 'about_screen.dart';
 import 'help_support_screen.dart';
 import 'notifications_screen.dart';
-import 'settings_screen.dart';
 import '../../../../../core/theme/app_theme.dart';
 import '../../../merchant/presentation/screens/transactions_screen.dart';
 import '../../../merchant/presentation/screens/wallets_screen.dart' show WalletCard;
@@ -532,349 +531,245 @@ class ProfileTab extends ConsumerWidget {
       data: (user) {
         return Scaffold(
           backgroundColor: AppTheme.backgroundColor,
-          body: CustomScrollView(
-            slivers: [
-              // Custom App Bar
-              SliverAppBar(
-                expandedHeight: 200,
-                floating: false,
-                pinned: true,
-                backgroundColor: AppTheme.primaryColor,
-                elevation: 0,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          AppTheme.primaryColor,
-                          AppTheme.primaryColor.withOpacity(0.8),
-                        ],
-                      ),
-                    ),
-                    child: SafeArea(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const SizedBox(height: AppTheme.spacing32),
-                          // Profile Avatar
-                          Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 4,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: CircleAvatar(
-                              radius: 50,
-                              backgroundColor: Colors.white.withOpacity(0.2),
-                              backgroundImage: (user?.profileImg != null && user?.profileImg != ''
-                                ? NetworkImage(user!.profileImg)
-                                : (user?.profilePicture != null && user?.profilePicture != ''
-                                  ? NetworkImage(user!.profilePicture)
-                                  : null)) as ImageProvider<Object>?,
-                              child: ((user?.profileImg == null || user?.profileImg == '') && (user?.profilePicture == null || user?.profilePicture == ''))
-                                  ? Text(
-                                      (user?.name != null && user?.name != '' ? user!.name[0].toUpperCase() : 'U'),
-                                      style: AppTheme.headlineLarge.copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    )
-                                  : null,
-                            ),
-                          ),
-                          const SizedBox(height: AppTheme.spacing16),
-                          // User Name
-                          Text(
-                            user?.name ?? 'User',
-                            style: AppTheme.titleMedium.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          if (user?.about != null && user?.about != '')
-                            Padding(
-                              padding: const EdgeInsets.only(top: AppTheme.spacing8),
-                              child: Text(
-                                user!.about,
-                                style: AppTheme.bodySmall.copyWith(
-                                  color: Colors.white.withOpacity(0.9),
-                                ),
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.white),
-                    tooltip: 'Edit Profile',
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const EditProfileScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+          appBar: AppBar(
+            backgroundColor: AppTheme.primaryColor,
+            elevation: 0,
+            title: const Text(
+              'Profile',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
               ),
-              // Content
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppTheme.spacing16),
+            ),
+            centerTitle: true,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.edit, color: Colors.white),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const EditProfileScreen(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Profile Header - Simple like WhatsApp
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(AppTheme.spacing24),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor,
+                  ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      // Profile Avatar
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Colors.white.withOpacity(0.2),
+                        backgroundImage: (user?.profileImg != null && user?.profileImg != ''
+                          ? NetworkImage(user!.profileImg)
+                          : (user?.profilePicture != null && user?.profilePicture != ''
+                            ? NetworkImage(user!.profilePicture)
+                            : null)) as ImageProvider<Object>?,
+                        child: ((user?.profileImg == null || user?.profileImg == '') && (user?.profilePicture == null || user?.profilePicture == ''))
+                            ? Text(
+                                (user?.name != null && user?.name != '' ? user!.name[0].toUpperCase() : 'U'),
+                                style: const TextStyle(
+                                  fontSize: 32,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            : null,
+                      ),
                       const SizedBox(height: AppTheme.spacing16),
-                      
-                      // Account Information Section
-                      _buildSection(
-                        title: 'Account Information',
-                        icon: Icons.account_circle_outlined,
-                        children: [
-                          _buildInfoTile(
-                            icon: Icons.email_outlined,
-                            title: 'Email',
-                            subtitle: user?.email ?? 'Not provided',
-                            iconColor: AppTheme.primaryColor,
-                          ),
-                          if (user?.phoneNumber != null && user?.phoneNumber != '')
-                            _buildInfoTile(
-                              icon: Icons.phone_outlined,
-                              title: 'Phone',
-                              subtitle: user!.phoneNumber,
-                              iconColor: AppTheme.successColor,
-                            ),
-                          if (user?.address != null && user?.address != '')
-                            _buildInfoTile(
-                              icon: Icons.location_on_outlined,
-                              title: 'Address',
-                              subtitle: user!.address,
-                              iconColor: AppTheme.warningColor,
-                            ),
-                          _buildInfoTile(
-                            icon: Icons.verified_user_outlined,
-                            title: 'Status',
-                            subtitle: (user?.isActive ?? false) ? 'Active' : 'Inactive',
-                            iconColor: (user?.isActive ?? false) ? AppTheme.successColor : AppTheme.errorColor,
-                            subtitleColor: (user?.isActive ?? false) ? AppTheme.successColor : AppTheme.errorColor,
-                          ),
-                          _buildInfoTile(
-                            icon: Icons.badge_outlined,
-                            title: 'Role',
-                            subtitle: user?.role ?? 'User',
-                            iconColor: AppTheme.primaryColor,
-                          ),
-                        ],
+                      // User Name
+                      Text(
+                        user?.name ?? 'User',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                      
-                      const SizedBox(height: AppTheme.spacing24),
-                      
-                      // Account Actions Section
-                      _buildSection(
-                        title: 'Account Actions',
-                        icon: Icons.settings_outlined,
-                        children: [
-                          _buildActionTile(
-                            icon: Icons.edit_outlined,
-                            title: 'Edit Profile',
-                            subtitle: 'Update your personal information',
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const EditProfileScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          _buildActionTile(
-                            icon: Icons.lock_outline,
-                            title: 'Change Password',
-                            subtitle: 'Update your account password',
-                            onTap: () {
-                              // TODO: Implement change password
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                AppTheme.infoSnackBar(message: 'Change password feature coming soon'),
-                              );
-                            },
-                          ),
-                        ],
+                      const SizedBox(height: AppTheme.spacing4),
+                      // User Email
+                      Text(
+                        user?.email ?? 'user@example.com',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white.withOpacity(0.8),
+                        ),
                       ),
-                      
-                      const SizedBox(height: AppTheme.spacing24),
-                      
-                      // Support & Settings Section
-                      _buildSection(
-                        title: 'Support & Settings',
-                        icon: Icons.help_outline,
-                        children: [
-                          _buildActionTile(
-                            icon: Icons.info_outline,
-                            title: 'About',
-                            subtitle: 'Learn more about the app',
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const AboutScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          _buildActionTile(
-                            icon: Icons.help_outline,
-                            title: 'Help & Support',
-                            subtitle: 'Get help and contact support',
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const HelpSupportScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          _buildActionTile(
-                            icon: Icons.notifications_outlined,
-                            title: 'Notifications',
-                            subtitle: 'Manage your notifications',
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const NotificationsScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          _buildActionTile(
-                            icon: Icons.settings_outlined,
-                            title: 'Settings',
-                            subtitle: 'App preferences and configuration',
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const SettingsScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                      
-                      const SizedBox(height: AppTheme.spacing24),
-                      
-                      // Account Management Section
-                      _buildSection(
-                        title: 'Account Management',
-                        icon: Icons.security_outlined,
-                        children: [
-                          _buildActionTile(
-                            icon: Icons.logout,
-                            title: 'Logout',
-                            subtitle: 'Sign out of your account',
-                            onTap: () async {
-                              await ref.read(authProvider.notifier).signOut();
-                              if (context.mounted) {
-                                Navigator.of(context).pushAndRemoveUntil(
-                                  MaterialPageRoute(
-                                    builder: (context) => const LoginScreen(),
-                                  ),
-                                  (route) => false,
-                                );
-                              }
-                            },
-                            textColor: AppTheme.warningColor,
-                          ),
-                          _buildActionTile(
-                            icon: Icons.delete_forever,
-                            title: 'Delete Account',
-                            subtitle: 'Permanently delete your account',
-                            onTap: () async {
-                              final confirm = await showDialog<bool>(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  backgroundColor: AppTheme.surfaceColor,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
-                                  ),
-                                  title: Row(
-                                    children: [
-                                      Icon(Icons.warning, color: AppTheme.errorColor),
-                                      const SizedBox(width: AppTheme.spacing8),
-                                      Text(
-                                        'Delete Account',
-                                        style: AppTheme.titleMedium.copyWith(color: AppTheme.errorColor),
-                                      ),
-                                    ],
-                                  ),
-                                  content: Text(
-                                    'Are you sure you want to delete your account? This action cannot be undone.',
-                                    style: AppTheme.bodyMedium,
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context, false),
-                                      child: Text(
-                                        'Cancel',
-                                        style: AppTheme.bodyMedium.copyWith(color: AppTheme.primaryColor),
-                                      ),
-                                    ),
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context, true),
-                                      child: Text(
-                                        'Delete',
-                                        style: AppTheme.bodyMedium.copyWith(color: AppTheme.errorColor),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                              if (confirm == true) {
-                                try {
-                                  await ref.read(authProvider.notifier).deleteAccount();
-                                  if (context.mounted) {
-                                    Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(
-                                        builder: (context) => const LoginScreen(),
-                                      ),
-                                      (route) => false,
-                                    );
-                                  }
-                                } catch (e) {
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      AppTheme.errorSnackBar(message: 'Error: $e'),
-                                    );
-                                  }
-                                }
-                              }
-                            },
-                            textColor: AppTheme.errorColor,
-                          ),
-                        ],
-                      ),
-                      
-                      const SizedBox(height: AppTheme.spacing32),
                     ],
                   ),
                 ),
-              ),
-            ],
+                
+                // Settings List - Simple like WhatsApp
+                Container(
+                  color: AppTheme.surfaceColor,
+                  child: Column(
+                    children: [
+                      // Account Settings
+                      _buildSettingsSection('Account', [
+                        _buildSettingsTile(
+                          icon: Icons.person_outline,
+                          title: 'Profile Details',
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const EditProfileScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildSettingsTile(
+                          icon: Icons.lock_outline,
+                          title: 'Password',
+                          onTap: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              AppTheme.infoSnackBar(message: 'Change password feature coming soon'),
+                            );
+                          },
+                        ),
+                        _buildSettingsTile(
+                          icon: Icons.phone_outlined,
+                          title: 'Phone Number',
+                          subtitle: user?.phoneNumber ?? 'Not provided',
+                          onTap: () {},
+                        ),
+                      ]),
+                      
+                      // App Settings
+                      _buildSettingsSection('App', [
+                        _buildSettingsTile(
+                          icon: Icons.notifications_outlined,
+                          title: 'Notifications',
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const NotificationsScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildSettingsTile(
+                          icon: Icons.dark_mode_outlined,
+                          title: 'Dark Mode',
+                          trailing: Switch(
+                            value: false,
+                            onChanged: (value) {
+                              // TODO: Implement dark mode
+                            },
+                          ),
+                          onTap: () {}, // Empty onTap since we have a Switch
+                        ),
+                        _buildSettingsTile(
+                          icon: Icons.language_outlined,
+                          title: 'Language',
+                          subtitle: 'English',
+                          onTap: () {},
+                        ),
+                      ]),
+                      
+                      // Support
+                      _buildSettingsSection('Support', [
+                        _buildSettingsTile(
+                          icon: Icons.help_outline,
+                          title: 'Help & Support',
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const HelpSupportScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _buildSettingsTile(
+                          icon: Icons.info_outline,
+                          title: 'About',
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const AboutScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ]),
+                      
+                      // Account Management
+                      _buildSettingsSection('Account Management', [
+                        _buildSettingsTile(
+                          icon: Icons.logout,
+                          title: 'Logout',
+                          textColor: AppTheme.warningColor,
+                          onTap: () async {
+                            await ref.read(authProvider.notifier).signOut();
+                            if (context.mounted) {
+                              Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                  builder: (context) => const LoginScreen(),
+                                ),
+                                (route) => false,
+                              );
+                            }
+                          },
+                        ),
+                        _buildSettingsTile(
+                          icon: Icons.delete_forever,
+                          title: 'Delete Account',
+                          textColor: AppTheme.errorColor,
+                          onTap: () async {
+                            final confirm = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Delete Account'),
+                                content: const Text('Are you sure you want to delete your account? This action cannot be undone.'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).pop(false),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).pop(true),
+                                    child: const Text('Delete'),
+                                  ),
+                                ],
+                              ),
+                            );
+                            if (confirm == true) {
+                              try {
+                                await ref.read(authProvider.notifier).deleteAccount();
+                                if (context.mounted) {
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                      builder: (context) => const LoginScreen(),
+                                    ),
+                                    (route) => false,
+                                  );
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    AppTheme.errorSnackBar(message: 'Error: $e'),
+                                  );
+                                }
+                              }
+                            }
+                          },
+                        ),
+                      ]),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -885,210 +780,77 @@ class ProfileTab extends ConsumerWidget {
     );
   }
 
-  Widget _buildSection({
-    required String title,
-    required IconData icon,
-    required List<Widget> children,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppTheme.spacing16),
-      decoration: BoxDecoration(
-        color: AppTheme.surfaceColor,
-        borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
-        border: Border.all(color: AppTheme.thinBorderColor, width: AppTheme.thinBorderWidth),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.primaryColor.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Section Header
-          Padding(
-            padding: const EdgeInsets.all(AppTheme.spacing16),
-            child: Row(
-              children: [
-                Icon(icon, color: AppTheme.primaryColor, size: 24),
-                const SizedBox(width: AppTheme.spacing12),
-                Text(
-                  title,
-                  style: AppTheme.titleMedium.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+  Widget _buildSettingsSection(String title, List<Widget> children) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey,
             ),
           ),
-          // Section Content
-          ...children,
-        ],
-      ),
+        ),
+        Container(
+          color: Colors.white,
+          child: Column(children: children),
+        ),
+        const SizedBox(height: 8),
+      ],
     );
   }
 
-  Widget _buildInfoTile({
+  Widget _buildSettingsTile({
     required IconData icon,
     required String title,
-    required String subtitle,
-    required Color iconColor,
-    Color? subtitleColor,
-  }) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacing16),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: AppTheme.thinBorderColor,
-            width: AppTheme.thinBorderWidth,
-          ),
-        ),
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacing8,
-          vertical: AppTheme.spacing4,
-        ),
-        leading: Container(
-          padding: const EdgeInsets.all(AppTheme.spacing8),
-          decoration: BoxDecoration(
-            color: iconColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-          ),
-          child: Icon(icon, color: iconColor, size: 20),
-        ),
-        title: Text(
-          title,
-          style: AppTheme.bodyMedium.copyWith(
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: AppTheme.bodySmall.copyWith(
-            color: subtitleColor ?? AppTheme.textSecondaryColor,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActionTile({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
+    String? subtitle,
+    Widget? trailing,
     Color? textColor,
+    required VoidCallback onTap,
   }) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacing16),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: AppTheme.thinBorderColor,
-            width: AppTheme.thinBorderWidth,
-          ),
+    return ListTile(
+      leading: Icon(icon, color: textColor ?? Colors.black87),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: textColor ?? Colors.black87,
+          fontWeight: FontWeight.w500,
         ),
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacing8,
-          vertical: AppTheme.spacing4,
-        ),
-        leading: Container(
-          padding: const EdgeInsets.all(AppTheme.spacing8),
-          decoration: BoxDecoration(
-            color: (textColor ?? AppTheme.primaryColor).withOpacity(0.1),
-            borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-          ),
-          child: Icon(icon, color: textColor ?? AppTheme.primaryColor, size: 20),
-        ),
-        title: Text(
-          title,
-          style: AppTheme.bodyMedium.copyWith(
-            fontWeight: FontWeight.w500,
-            color: textColor,
-          ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: AppTheme.bodySmall.copyWith(
-            color: textColor?.withOpacity(0.7) ?? AppTheme.textSecondaryColor,
-          ),
-        ),
-        trailing: Icon(
-          Icons.chevron_right,
-          color: textColor ?? AppTheme.textSecondaryColor,
-          size: 20,
-        ),
-        onTap: onTap,
-      ),
+      subtitle: subtitle != null
+          ? Text(
+              subtitle,
+              style: const TextStyle(
+                color: Colors.grey,
+                fontSize: 14,
+              ),
+            )
+          : null,
+      trailing: trailing ?? const Icon(Icons.chevron_right, color: Colors.grey),
+      onTap: onTap,
     );
   }
 }
 
 class _TopUpSheet extends StatefulWidget {
   const _TopUpSheet();
+
   @override
   State<_TopUpSheet> createState() => _TopUpSheetState();
 }
 
 class _TopUpSheetState extends State<_TopUpSheet> {
-  final _formKey = GlobalKey<FormState>();
-  final _amountController = TextEditingController();
-  bool _isLoading = false;
-  String? _selectedMethod = 'Mobile Money';
-  final List<String> _methods = ['Mobile Money', 'Card', 'Bank'];
-
-  // Mock wallets (same as homeWallets)
-  final List<Wallet> _wallets = [
-    Wallet(
-      id: 'WALLET-1',
-      name: 'Main Wallet',
-      balance: 250000,
-      currency: 'RWF',
-      type: 'individual',
-      status: 'active',
-      createdAt: DateTime.now().subtract(const Duration(days: 120)),
-      owners: ['You'],
-      isDefault: true,
-    ),
-    Wallet(
-      id: 'WALLET-2',
-      name: 'Joint Wallet',
-      balance: 1200000,
-      currency: 'RWF',
-      type: 'joint',
-      status: 'active',
-      createdAt: DateTime.now().subtract(const Duration(days: 60)),
-      owners: ['You', 'Alice', 'Eric'],
-      isDefault: false,
-    ),
-    Wallet(
-      id: 'WALLET-3',
-      name: 'Vacation Fund',
-      balance: 350000,
-      currency: 'RWF',
-      type: 'individual',
-      status: 'inactive',
-      createdAt: DateTime.now().subtract(const Duration(days: 200)),
-      owners: ['You'],
-      isDefault: false,
-      description: 'Vacation savings',
-      targetAmount: 500000,
-      targetDate: DateTime.now().add(const Duration(days: 90)),
-    ),
+  final TextEditingController _amountController = TextEditingController();
+  String _selectedMethod = 'Mobile Money';
+  final List<String> _paymentMethods = [
+    'Mobile Money',
+    'Bank Transfer',
+    'Card',
   ];
-  Wallet? _selectedWallet;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedWallet = _wallets.firstWhere((w) => w.isDefault, orElse: () => _wallets.first);
-  }
 
   @override
   void dispose() {
@@ -1096,87 +858,111 @@ class _TopUpSheetState extends State<_TopUpSheet> {
     super.dispose();
   }
 
-  void _submit() async {
-    if (!_formKey.currentState!.validate()) return;
-    setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 1));
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-    Navigator.of(context).pop(true);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final bottom = MediaQuery.of(context).viewInsets.bottom;
-    return Padding(
-      padding: EdgeInsets.only(left: AppTheme.spacing16, right: AppTheme.spacing16, bottom: bottom + AppTheme.spacing16, top: AppTheme.spacing16),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text('Top Up Wallet', style: AppTheme.titleMedium, textAlign: TextAlign.center),
-            const SizedBox(height: AppTheme.spacing16),
-            Text('To Wallet', style: AppTheme.bodySmall.copyWith(fontWeight: FontWeight.w600)),
-            const SizedBox(height: AppTheme.spacing8),
-            DropdownButtonFormField<Wallet>(
-              value: _selectedWallet,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.account_balance_wallet),
-                border: OutlineInputBorder(),
+    return Container(
+      padding: EdgeInsets.only(
+        left: AppTheme.spacing16,
+        right: AppTheme.spacing16,
+        top: AppTheme.spacing16,
+        bottom: MediaQuery.of(context).viewInsets.bottom + AppTheme.spacing16,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Handle
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
               ),
-              items: _wallets.map((w) => DropdownMenuItem(
-                value: w,
-                child: Text('${w.name} (${w.balance.toStringAsFixed(0)} ${w.currency})'),
-              )).toList(),
-              onChanged: (w) => setState(() => _selectedWallet = w),
-              validator: (w) => w == null ? 'Select a wallet' : null,
             ),
-            const SizedBox(height: AppTheme.spacing16),
-            Text('Amount', style: AppTheme.bodySmall.copyWith(fontWeight: FontWeight.w600)),
-            const SizedBox(height: AppTheme.spacing8),
-            TextFormField(
-              controller: _amountController,
-              style: AppTheme.bodySmall,
-              decoration: const InputDecoration(
-                hintText: 'Enter amount',
-                prefixIcon: Icon(Icons.attach_money),
+          ),
+          const SizedBox(height: AppTheme.spacing16),
+          
+          // Title
+          Text(
+            'Top Up Wallet',
+            style: AppTheme.titleMedium.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppTheme.spacing24),
+          
+          // Amount Input
+          Text(
+            'Amount (RWF)',
+            style: AppTheme.bodyMedium.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacing8),
+          TextField(
+            controller: _amountController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              hintText: 'Enter amount',
+              prefixText: 'RWF ',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
               ),
-              validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Amount required';
-                final n = num.tryParse(v);
-                if (n == null || n <= 0) return 'Enter a valid amount';
-                return null;
-              },
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
             ),
-            const SizedBox(height: AppTheme.spacing16),
-            Text('Payment Method', style: AppTheme.bodySmall.copyWith(fontWeight: FontWeight.w600)),
-            const SizedBox(height: AppTheme.spacing8),
-            DropdownButtonFormField<String>(
-              value: _selectedMethod,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.payment),
-                border: OutlineInputBorder(),
+          ),
+          const SizedBox(height: AppTheme.spacing16),
+          
+          // Payment Method
+          Text(
+            'Payment Method',
+            style: AppTheme.bodyMedium.copyWith(
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: AppTheme.spacing8),
+          DropdownButtonFormField<String>(
+            value: _selectedMethod,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
               ),
-              items: _methods.map((m) => DropdownMenuItem(
-                value: m,
-                child: Text(m),
-              )).toList(),
-              onChanged: (m) => setState(() => _selectedMethod = m),
-              validator: (m) => m == null ? 'Select a method' : null,
             ),
-            const SizedBox(height: AppTheme.spacing16),
-            PrimaryButton(
-              label: 'Submit',
-              isLoading: _isLoading,
-              onPressed: _isLoading ? null : _submit,
-            ),
-            const SizedBox(height: AppTheme.actionSheetBottomSpacing),
-          ],
-        ),
+            items: _paymentMethods.map((String method) {
+              return DropdownMenuItem<String>(
+                value: method,
+                child: Text(method),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              if (newValue != null) {
+                setState(() {
+                  _selectedMethod = newValue;
+                });
+              }
+            },
+          ),
+          const SizedBox(height: AppTheme.spacing24),
+          
+          // Top Up Button
+          PrimaryButton(
+            label: 'Top Up',
+            onPressed: () {
+              final amount = _amountController.text;
+              if (amount.isNotEmpty) {
+                Navigator.of(context).pop(true);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  AppTheme.errorSnackBar(message: 'Please enter an amount'),
+                );
+              }
+            },
+          ),
+          const SizedBox(height: AppTheme.spacing16),
+        ],
       ),
     );
   }
-} 
+}
