@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../businesses/presentation/screens/business_profile_screen.dart';
+import '../../../businesses/domain/models/business.dart';
 
 class BusinessesScreen extends ConsumerStatefulWidget {
   const BusinessesScreen({super.key});
@@ -191,7 +193,7 @@ class _BusinessesScreenState extends ConsumerState<BusinessesScreen> {
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            // Navigate to business profile
+            _navigateToBusinessProfile(business);
           },
           borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
           child: Padding(
@@ -272,9 +274,9 @@ class _BusinessesScreenState extends ConsumerState<BusinessesScreen> {
                               const SizedBox(width: 3),
                               Expanded(
                                 child: Text(
-                                  business['location'] as String,
-                                  style: AppTheme.bodySmall.copyWith(
-                                    color: AppTheme.textSecondaryColor,
+                                business['location'] as String,
+                                style: AppTheme.bodySmall.copyWith(
+                                  color: AppTheme.textSecondaryColor,
                                     fontSize: 11,
                                   ),
                                   maxLines: 1,
@@ -376,7 +378,8 @@ class _BusinessesScreenState extends ConsumerState<BusinessesScreen> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          _showBusinessDetails(business);
+                          Navigator.of(context).pop(); // Close dialog
+                          _navigateToBusinessProfile(business);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.primaryColor,
@@ -670,180 +673,70 @@ class _BusinessesScreenState extends ConsumerState<BusinessesScreen> {
     );
   }
 
-  void _showBusinessDetails(Map<String, dynamic> business) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: AppTheme.surfaceColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
-          ),
-          child: Container(
-            constraints: const BoxConstraints(maxHeight: 600),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Header
-                Container(
-                  padding: const EdgeInsets.all(AppTheme.spacing16),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryColor.withOpacity(0.1),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(AppTheme.borderRadius16),
-                      topRight: Radius.circular(AppTheme.borderRadius16),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 25,
-                        backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
-                        child: Text(
-                          (business['name'] as String).substring(0, 1).toUpperCase(),
-                          style: AppTheme.titleMedium.copyWith(
-                            color: AppTheme.primaryColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: AppTheme.spacing12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              business['name'] as String,
-                              style: AppTheme.titleMedium.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: AppTheme.textPrimaryColor,
-                              ),
-                            ),
-                            Text(
-                              business['industry'] as String,
-                              style: AppTheme.bodyMedium.copyWith(
-                                color: AppTheme.primaryColor,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        icon: const Icon(Icons.close),
-                        color: AppTheme.textSecondaryColor,
-                      ),
-                    ],
-                  ),
-                ),
-                // Content
-                Flexible(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(AppTheme.spacing16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildDetailSection(
-                          'Business Information',
-                          [
-                            _buildDetailRow('Industry', business['industry'] as String),
-                            _buildDetailRow('Location', business['location'] as String),
-                            _buildDetailRow('Stage', business['stage'] as String),
-                            _buildDetailRow('Verification', business['isVerified'] ? 'Verified' : 'Not Verified'),
-                          ],
-                        ),
-                        const SizedBox(height: AppTheme.spacing16),
-                        _buildDetailSection(
-                          'Funding Details',
-                          [
-                            _buildDetailRow('Funding Goal', business['fundingGoal'] as String),
-                            _buildDetailRow('Equity Offered', business['equityOffered'] as String),
-                          ],
-                        ),
-                        const SizedBox(height: AppTheme.spacing16),
-                        _buildDetailSection(
-                          'Description',
-                          [
-                            Text(
-                              'This is a detailed description of ${business['name']}. The business operates in the ${business['industry']} industry and is currently seeking investment to scale their operations.',
-                              style: AppTheme.bodyMedium.copyWith(
-                                color: AppTheme.textPrimaryColor,
-                                height: 1.4,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                // Footer
-                Container(
-                  padding: const EdgeInsets.all(AppTheme.spacing16),
-                  decoration: BoxDecoration(
-                    color: AppTheme.backgroundColor,
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(AppTheme.borderRadius16),
-                      bottomRight: Radius.circular(AppTheme.borderRadius16),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            _showContactDialog(business);
-                          },
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(
-                              color: AppTheme.thinBorderColor,
-                              width: AppTheme.thinBorderWidth,
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-                            ),
-                          ),
-                          child: Text(
-                            'Contact',
-                            style: AppTheme.bodyMedium.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: AppTheme.textPrimaryColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: AppTheme.spacing12),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primaryColor,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-                            ),
-                          ),
-                          child: Text(
-                            'Close',
-                            style: AppTheme.bodyMedium.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+  void _navigateToBusinessProfile(Map<String, dynamic> businessData) {
+    // Convert the mock data to Business model
+    final business = Business(
+      id: businessData['name'] as String, // Using name as ID for mock data
+      name: businessData['name'] as String,
+      industry: businessData['industry'] as String,
+      location: businessData['location'] as String,
+      description: 'A promising ${businessData['industry']} company looking to revolutionize the market with innovative solutions and strong growth potential.',
+      stage: businessData['stage'] as String,
+      fundingGoal: businessData['fundingGoal'] as String,
+      equityOffered: businessData['equityOffered'] as String,
+      website: 'https://${(businessData['name'] as String).toLowerCase().replaceAll(' ', '')}.com',
+      email: 'contact@${(businessData['name'] as String).toLowerCase().replaceAll(' ', '')}.com',
+      phone: '+250 123 456 789',
+      isVerified: businessData['isVerified'] as bool,
+      rating: 4.5,
+      totalReviews: 25,
+      totalInvestors: 15,
+      fundingProgress: 65.0,
+      expectedReturn: 18.5,
+      riskLevel: 3.2,
+      totalInvestmentValue: 250000000, // 250M RWF
+      tags: ['Innovation', 'Growth', 'Technology'],
+      images: [],
+      foundedDate: '2020-01-01',
+      teamSize: '10-20 employees',
+      businessModel: 'B2B SaaS Platform',
+      keyMetrics: [
+        'Monthly recurring revenue: 15M RWF',
+        'Customer acquisition cost: 2M RWF',
+        'Customer lifetime value: 25M RWF',
+        'Churn rate: 5%',
+      ],
+      financials: {
+        'revenue': 150000000,
+        'expenses': 120000000,
+        'profit': 30000000,
       },
+      achievements: [
+        'Winner of Tech Innovation Award 2023',
+        'Featured in Top 10 Startups Rwanda',
+        'Partnership with major corporations',
+      ],
+      socialLinks: {
+        'linkedin': 'https://linkedin.com/company/${(businessData['name'] as String).toLowerCase().replaceAll(' ', '')}',
+        'twitter': 'https://twitter.com/${(businessData['name'] as String).toLowerCase().replaceAll(' ', '')}',
+      },
+      nextMilestone: 'Expand to 3 new markets by end of 2024',
+      useOfFunds: 'Product development (40%), Marketing (30%), Team expansion (20%), Operations (10%)',
+      exitStrategy: 'IPO or acquisition by major tech company within 5-7 years',
+      competitiveAdvantage: 'Proprietary technology, strong team, first-mover advantage in local market',
+      targetMarkets: ['Rwanda', 'East Africa', 'Global'],
+      businessPlan: 'Comprehensive 5-year growth strategy with clear milestones',
+      pitchDeck: 'Professional presentation available upon request',
+      demoVideo: 'Product demonstration video showcasing key features',
+      isActive: true,
+      createdAt: DateTime(2020, 1, 1),
+      updatedAt: DateTime.now(),
+    );
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => BusinessProfileScreen(business: business),
+      ),
     );
   }
 
