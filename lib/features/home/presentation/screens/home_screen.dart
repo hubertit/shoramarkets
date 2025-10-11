@@ -29,6 +29,7 @@ class HomeScreen extends ConsumerWidget {
     final currentIndex = ref.watch(tabIndexProvider);
     final tabs = [
       const _DashboardTab(),
+      const _WalletsTab(),
       const TransactionsScreen(),
       const InvestmentsTab(),
       const ProfileTab(),
@@ -45,6 +46,11 @@ class HomeScreen extends ConsumerWidget {
             icon: Icon(Icons.dashboard_outlined),
             selectedIcon: Icon(Icons.dashboard),
             label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.account_balance_wallet_outlined),
+            selectedIcon: Icon(Icons.account_balance_wallet),
+            label: 'Wallets',
           ),
           NavigationDestination(
             icon: Icon(Icons.swap_horiz_outlined),
@@ -67,14 +73,368 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
-class _DashboardTab extends StatefulWidget {
+class _DashboardTab extends StatelessWidget {
   const _DashboardTab();
 
   @override
-  State<_DashboardTab> createState() => _DashboardTabState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppTheme.primaryColor,
+        elevation: 0,
+        centerTitle: false,
+        automaticallyImplyLeading: false,
+        title: Align(
+          alignment: Alignment.centerLeft,
+          child: Image.asset(
+            'assets/images/logo-name.png',
+            height: 32,
+            fit: BoxFit.contain,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search, color: Colors.white),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const SearchScreen()),
+              );
+            },
+          ),
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const NotificationsScreen()),
+                  );
+                },
+              ),
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  constraints: const BoxConstraints(
+                    minWidth: 16,
+                    minHeight: 16,
+                  ),
+                  child: const Text(
+                    '2',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppTheme.spacing16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Welcome Section
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(AppTheme.spacing20),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppTheme.primaryColor,
+                    AppTheme.primaryColor.withOpacity(0.8),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Welcome to Shora Markets',
+                    style: AppTheme.titleMedium.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: AppTheme.spacing8),
+                  Text(
+                    'Your financial journey starts here',
+                    style: AppTheme.bodyMedium.copyWith(
+                      color: Colors.white.withOpacity(0.9),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacing24),
+            
+            // Quick Actions Grid
+            Text(
+              'Quick Actions',
+              style: AppTheme.titleMedium.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacing16),
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              crossAxisSpacing: AppTheme.spacing12,
+              mainAxisSpacing: AppTheme.spacing12,
+              childAspectRatio: 1.2,
+              children: [
+                _buildQuickActionCard(
+                  icon: Icons.account_balance_wallet,
+                  title: 'Wallets',
+                  subtitle: 'Manage your money',
+                  color: AppTheme.primaryColor,
+                  onTap: () {
+                    // Navigate to Wallets tab
+                    // This would need to be handled by the parent widget
+                  },
+                ),
+                _buildQuickActionCard(
+                  icon: Icons.swap_horiz,
+                  title: 'Transactions',
+                  subtitle: 'View history',
+                  color: AppTheme.successColor,
+                  onTap: () {
+                    // Navigate to Transactions tab
+                  },
+                ),
+                _buildQuickActionCard(
+                  icon: Icons.trending_up,
+                  title: 'Investments',
+                  subtitle: 'Grow your wealth',
+                  color: AppTheme.warningColor,
+                  onTap: () {
+                    // Navigate to Investments tab
+                  },
+                ),
+                _buildQuickActionCard(
+                  icon: Icons.person,
+                  title: 'Profile',
+                  subtitle: 'Account settings',
+                  color: AppTheme.errorColor,
+                  onTap: () {
+                    // Navigate to Profile tab
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: AppTheme.spacing24),
+            
+            // Recent Activity
+            Text(
+              'Recent Activity',
+              style: AppTheme.titleMedium.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacing16),
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacing16),
+              decoration: BoxDecoration(
+                color: AppTheme.surfaceColor,
+                borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
+                border: Border.all(color: AppTheme.thinBorderColor),
+              ),
+              child: Column(
+                children: [
+                  _buildActivityItem(
+                    icon: Icons.account_balance_wallet,
+                    title: 'Wallet Balance Updated',
+                    subtitle: 'Main Wallet - RWF 250,000',
+                    time: '2 hours ago',
+                    color: AppTheme.primaryColor,
+                  ),
+                  const Divider(height: AppTheme.spacing16),
+                  _buildActivityItem(
+                    icon: Icons.swap_horiz,
+                    title: 'Transaction Completed',
+                    subtitle: 'Payment received from Alice',
+                    time: '4 hours ago',
+                    color: AppTheme.successColor,
+                  ),
+                  const Divider(height: AppTheme.spacing16),
+                  _buildActivityItem(
+                    icon: Icons.trending_up,
+                    title: 'Investment Opportunity',
+                    subtitle: 'New advisor available',
+                    time: '1 day ago',
+                    color: AppTheme.warningColor,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickActionCard({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(AppTheme.spacing16),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
+          border: Border.all(color: color.withOpacity(0.3)),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: color, size: 32),
+            const SizedBox(height: AppTheme.spacing8),
+            Text(
+              title,
+              style: AppTheme.bodyMedium.copyWith(
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppTheme.spacing4),
+            Text(
+              subtitle,
+              style: AppTheme.bodySmall.copyWith(
+                color: color.withOpacity(0.8),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActivityItem({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required String time,
+    required Color color,
+  }) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(AppTheme.spacing8),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
+          ),
+          child: Icon(icon, color: color, size: 20),
+        ),
+        const SizedBox(width: AppTheme.spacing12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: AppTheme.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: AppTheme.spacing4),
+              Text(
+                subtitle,
+                style: AppTheme.bodySmall.copyWith(
+                  color: AppTheme.textSecondaryColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Text(
+          time,
+          style: AppTheme.bodySmall.copyWith(
+            color: AppTheme.textSecondaryColor,
+          ),
+        ),
+      ],
+    );
+  }
 }
 
-class _DashboardTabState extends State<_DashboardTab> {
+class _QuickActionButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  const _QuickActionButton({required this.icon, required this.label, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacing4),
+        padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing16),
+        decoration: BoxDecoration(
+          color: AppTheme.primaryColor.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: AppTheme.primaryColor, size: 28),
+            const SizedBox(height: AppTheme.spacing8),
+            Text(label, style: AppTheme.bodySmall.copyWith(color: AppTheme.primaryColor, fontWeight: FontWeight.w600, fontSize: 12)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PlaceholderScreen extends StatelessWidget {
+  final String title;
+  const _PlaceholderScreen({required this.title});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(title)),
+      body: Center(child: Text('This is a placeholder for $title.')),
+    );
+  }
+}
+
+class _TransactionsTab extends StatelessWidget {
+  const _TransactionsTab();
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('Transactions'));
+  }
+}
+class _WalletsTab extends StatefulWidget {
+  const _WalletsTab();
+
+  @override
+  State<_WalletsTab> createState() => _WalletsTabState();
+}
+
+class _WalletsTabState extends State<_WalletsTab> {
   // State to track balance visibility for each wallet
   final Map<String, bool> _walletBalanceVisibility = {};
 
@@ -464,63 +824,6 @@ class _DashboardTabState extends State<_DashboardTab> {
     }
   }
 }
-
-class _QuickActionButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-  const _QuickActionButton({required this.icon, required this.label, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: AppTheme.spacing4),
-        padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing16),
-        decoration: BoxDecoration(
-          color: AppTheme.primaryColor.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(AppTheme.borderRadius16),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: AppTheme.primaryColor, size: 28),
-            const SizedBox(height: AppTheme.spacing8),
-            Text(label, style: AppTheme.bodySmall.copyWith(color: AppTheme.primaryColor, fontWeight: FontWeight.w600, fontSize: 12)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _PlaceholderScreen extends StatelessWidget {
-  final String title;
-  const _PlaceholderScreen({required this.title});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(child: Text('This is a placeholder for $title.')),
-    );
-  }
-}
-
-class _TransactionsTab extends StatelessWidget {
-  const _TransactionsTab();
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Transactions'));
-  }
-}
-class _WalletsTab extends StatelessWidget {
-  const _WalletsTab();
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text('Wallets'));
-  }
-}
 class ProfileTab extends ConsumerWidget {
   const ProfileTab({super.key});
 
@@ -532,8 +835,8 @@ class ProfileTab extends ConsumerWidget {
         return Scaffold(
           backgroundColor: AppTheme.backgroundColor,
           appBar: AppBar(
-            backgroundColor: AppTheme.primaryColor,
-            elevation: 0,
+                backgroundColor: AppTheme.primaryColor,
+                elevation: 0,
             title: const Text(
               'Profile',
               style: TextStyle(
@@ -542,60 +845,60 @@ class ProfileTab extends ConsumerWidget {
               ),
             ),
             centerTitle: true,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.edit, color: Colors.white),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const EditProfileScreen(),
-                    ),
-                  );
-                },
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.white),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const EditProfileScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
-            ],
-          ),
           body: SingleChildScrollView(
-            child: Column(
-              children: [
+                      child: Column(
+                        children: [
                 // Profile Header - Simple like WhatsApp
-                Container(
+                          Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(AppTheme.spacing24),
-                  decoration: BoxDecoration(
+                            decoration: BoxDecoration(
                     color: AppTheme.primaryColor,
                   ),
                   child: Column(
-                    children: [
+                        children: [
                       // Profile Avatar
                       CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Colors.white.withOpacity(0.2),
-                        backgroundImage: (user?.profileImg != null && user?.profileImg != ''
-                          ? NetworkImage(user!.profileImg)
-                          : (user?.profilePicture != null && user?.profilePicture != ''
-                            ? NetworkImage(user!.profilePicture)
-                            : null)) as ImageProvider<Object>?,
-                        child: ((user?.profileImg == null || user?.profileImg == '') && (user?.profilePicture == null || user?.profilePicture == ''))
-                            ? Text(
-                                (user?.name != null && user?.name != '' ? user!.name[0].toUpperCase() : 'U'),
+                              radius: 50,
+                              backgroundColor: Colors.white.withOpacity(0.2),
+                              backgroundImage: (user?.profileImg != null && user?.profileImg != ''
+                                ? NetworkImage(user!.profileImg)
+                                : (user?.profilePicture != null && user?.profilePicture != ''
+                                  ? NetworkImage(user!.profilePicture)
+                                  : null)) as ImageProvider<Object>?,
+                              child: ((user?.profileImg == null || user?.profileImg == '') && (user?.profilePicture == null || user?.profilePicture == ''))
+                                  ? Text(
+                                      (user?.name != null && user?.name != '' ? user!.name[0].toUpperCase() : 'U'),
                                 style: const TextStyle(
                                   fontSize: 32,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            : null,
-                      ),
-                      const SizedBox(height: AppTheme.spacing16),
-                      // User Name
-                      Text(
-                        user?.name ?? 'User',
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
+                                  : null,
+                          ),
+                          const SizedBox(height: AppTheme.spacing16),
+                          // User Name
+                          Text(
+                            user?.name ?? 'User',
                         style: const TextStyle(
                           fontSize: 24,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
                       const SizedBox(height: AppTheme.spacing4),
                       // User Email
@@ -604,11 +907,11 @@ class ProfileTab extends ConsumerWidget {
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white.withOpacity(0.8),
-                        ),
+                              ),
+                            ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
+                    ),
                 
                 // Settings List - Simple like WhatsApp
                 Container(
@@ -620,23 +923,23 @@ class ProfileTab extends ConsumerWidget {
                         _buildSettingsTile(
                           icon: Icons.person_outline,
                           title: 'Profile Details',
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const EditProfileScreen(),
-                              ),
-                            );
-                          },
-                        ),
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const EditProfileScreen(),
+                                ),
+                              );
+                            },
+                          ),
                         _buildSettingsTile(
-                          icon: Icons.lock_outline,
+                            icon: Icons.lock_outline,
                           title: 'Password',
-                          onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              AppTheme.infoSnackBar(message: 'Change password feature coming soon'),
-                            );
-                          },
-                        ),
+                            onTap: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                AppTheme.infoSnackBar(message: 'Change password feature coming soon'),
+                              );
+                            },
+                          ),
                         _buildSettingsTile(
                           icon: Icons.phone_outlined,
                           title: 'Phone Number',
@@ -650,14 +953,14 @@ class ProfileTab extends ConsumerWidget {
                         _buildSettingsTile(
                           icon: Icons.notifications_outlined,
                           title: 'Notifications',
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
                                 builder: (context) => const NotificationsScreen(),
-                              ),
-                            );
-                          },
-                        ),
+                                ),
+                              );
+                            },
+                          ),
                         _buildSettingsTile(
                           icon: Icons.dark_mode_outlined,
                           title: 'Dark Mode',
@@ -680,95 +983,95 @@ class ProfileTab extends ConsumerWidget {
                       // Support
                       _buildSettingsSection('Support', [
                         _buildSettingsTile(
-                          icon: Icons.help_outline,
-                          title: 'Help & Support',
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const HelpSupportScreen(),
-                              ),
-                            );
-                          },
-                        ),
+                            icon: Icons.help_outline,
+                            title: 'Help & Support',
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const HelpSupportScreen(),
+                                ),
+                              );
+                            },
+                          ),
                         _buildSettingsTile(
                           icon: Icons.info_outline,
                           title: 'About',
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
                                 builder: (context) => const AboutScreen(),
-                              ),
-                            );
-                          },
-                        ),
+                                ),
+                              );
+                            },
+                          ),
                       ]),
                       
                       // Account Management
                       _buildSettingsSection('Account Management', [
                         _buildSettingsTile(
-                          icon: Icons.logout,
-                          title: 'Logout',
+                            icon: Icons.logout,
+                            title: 'Logout',
                           textColor: AppTheme.warningColor,
-                          onTap: () async {
-                            await ref.read(authProvider.notifier).signOut();
-                            if (context.mounted) {
-                              Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                  builder: (context) => const LoginScreen(),
-                                ),
-                                (route) => false,
-                              );
-                            }
-                          },
-                        ),
+                            onTap: () async {
+                              await ref.read(authProvider.notifier).signOut();
+                              if (context.mounted) {
+                                Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                    builder: (context) => const LoginScreen(),
+                                  ),
+                                  (route) => false,
+                                );
+                              }
+                            },
+                          ),
                         _buildSettingsTile(
-                          icon: Icons.delete_forever,
-                          title: 'Delete Account',
+                            icon: Icons.delete_forever,
+                            title: 'Delete Account',
                           textColor: AppTheme.errorColor,
-                          onTap: () async {
-                            final confirm = await showDialog<bool>(
-                              context: context,
-                              builder: (context) => AlertDialog(
+                            onTap: () async {
+                              final confirm = await showDialog<bool>(
+                                context: context,
+                                builder: (context) => AlertDialog(
                                 title: const Text('Delete Account'),
                                 content: const Text('Are you sure you want to delete your account? This action cannot be undone.'),
-                                actions: [
-                                  TextButton(
+                                  actions: [
+                                    TextButton(
                                     onPressed: () => Navigator.of(context).pop(false),
                                     child: const Text('Cancel'),
-                                  ),
-                                  TextButton(
+                                    ),
+                                    TextButton(
                                     onPressed: () => Navigator.of(context).pop(true),
                                     child: const Text('Delete'),
-                                  ),
-                                ],
-                              ),
-                            );
-                            if (confirm == true) {
-                              try {
-                                await ref.read(authProvider.notifier).deleteAccount();
-                                if (context.mounted) {
-                                  Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(
-                                      builder: (context) => const LoginScreen(),
                                     ),
-                                    (route) => false,
-                                  );
-                                }
-                              } catch (e) {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    AppTheme.errorSnackBar(message: 'Error: $e'),
-                                  );
+                                  ],
+                                ),
+                              );
+                              if (confirm == true) {
+                                try {
+                                  await ref.read(authProvider.notifier).deleteAccount();
+                                  if (context.mounted) {
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                        builder: (context) => const LoginScreen(),
+                                      ),
+                                      (route) => false,
+                                    );
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      AppTheme.errorSnackBar(message: 'Error: $e'),
+                                    );
+                                  }
                                 }
                               }
-                            }
-                          },
-                        ),
+                            },
+                          ),
                       ]),
-                    ],
-                  ),
+                        ],
                 ),
-              ],
+              ),
+            ],
             ),
           ),
         );
@@ -782,12 +1085,12 @@ class ProfileTab extends ConsumerWidget {
 
   Widget _buildSettingsSection(String title, List<Widget> children) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
           padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
           child: Text(
-            title,
+                  title,
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -814,16 +1117,16 @@ class ProfileTab extends ConsumerWidget {
   }) {
     return ListTile(
       leading: Icon(icon, color: textColor ?? Colors.black87),
-      title: Text(
-        title,
+        title: Text(
+          title,
         style: TextStyle(
           color: textColor ?? Colors.black87,
-          fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w500,
+          ),
         ),
-      ),
       subtitle: subtitle != null
           ? Text(
-              subtitle,
+          subtitle,
               style: const TextStyle(
                 color: Colors.grey,
                 fontSize: 14,
@@ -831,7 +1134,7 @@ class ProfileTab extends ConsumerWidget {
             )
           : null,
       trailing: trailing ?? const Icon(Icons.chevron_right, color: Colors.grey),
-      onTap: onTap,
+        onTap: onTap,
     );
   }
 }
@@ -867,10 +1170,10 @@ class _TopUpSheetState extends State<_TopUpSheet> {
         top: AppTheme.spacing16,
         bottom: MediaQuery.of(context).viewInsets.bottom + AppTheme.spacing16,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
           // Handle
           Center(
             child: Container(
@@ -881,8 +1184,8 @@ class _TopUpSheetState extends State<_TopUpSheet> {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-          ),
-          const SizedBox(height: AppTheme.spacing16),
+            ),
+            const SizedBox(height: AppTheme.spacing16),
           
           // Title
           Text(
@@ -901,19 +1204,19 @@ class _TopUpSheetState extends State<_TopUpSheet> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: AppTheme.spacing8),
+            const SizedBox(height: AppTheme.spacing8),
           TextField(
-            controller: _amountController,
+              controller: _amountController,
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
-              hintText: 'Enter amount',
+                hintText: 'Enter amount',
               prefixText: 'RWF ',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
               ),
             ),
-          ),
-          const SizedBox(height: AppTheme.spacing16),
+            ),
+            const SizedBox(height: AppTheme.spacing16),
           
           // Payment Method
           Text(
@@ -922,9 +1225,9 @@ class _TopUpSheetState extends State<_TopUpSheet> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: AppTheme.spacing8),
-          DropdownButtonFormField<String>(
-            value: _selectedMethod,
+            const SizedBox(height: AppTheme.spacing8),
+            DropdownButtonFormField<String>(
+              value: _selectedMethod,
             decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
@@ -947,7 +1250,7 @@ class _TopUpSheetState extends State<_TopUpSheet> {
           const SizedBox(height: AppTheme.spacing24),
           
           // Top Up Button
-          PrimaryButton(
+            PrimaryButton(
             label: 'Top Up',
             onPressed: () {
               final amount = _amountController.text;
@@ -965,4 +1268,4 @@ class _TopUpSheetState extends State<_TopUpSheet> {
       ),
     );
   }
-}
+} 
