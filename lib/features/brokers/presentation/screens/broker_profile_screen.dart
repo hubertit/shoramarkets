@@ -115,11 +115,11 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
           Stack(
             children: [
               CircleAvatar(
-                radius: 50,
+                radius: 40,
                 backgroundColor: AppTheme.primaryColor,
                 child: Text(
                   widget.broker.name.substring(0, 1).toUpperCase(),
-                  style: AppTheme.titleMedium.copyWith(
+                  style: AppTheme.bodyMedium.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
@@ -153,32 +153,41 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
               children: [
                 Text(
                   widget.broker.name,
-                  style: AppTheme.titleMedium.copyWith(
+                  style: AppTheme.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: AppTheme.textPrimaryColor,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   widget.broker.specialization,
-                  style: AppTheme.bodyMedium.copyWith(
+                  style: AppTheme.bodySmall.copyWith(
                     color: AppTheme.primaryColor,
                     fontWeight: FontWeight.w600,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Row(
                   children: [
                     Icon(
                       Icons.location_on,
-                      size: 16,
+                      size: 14,
                       color: AppTheme.textSecondaryColor,
                     ),
-                    const SizedBox(width: 4),
-                    Text(
-                      widget.broker.location,
-                      style: AppTheme.bodyMedium.copyWith(
-                        color: AppTheme.textSecondaryColor,
+                    const SizedBox(width: 3),
+                    Expanded(
+                      child: Text(
+                        widget.broker.location,
+                        style: AppTheme.bodySmall.copyWith(
+                          color: AppTheme.textSecondaryColor,
+                          fontSize: 11,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -189,22 +198,24 @@ class _BrokerProfileScreenState extends ConsumerState<BrokerProfileScreen>
                   children: [
                     Icon(
                       Icons.star,
-                      size: 16,
+                      size: 14,
                       color: Colors.amber,
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 3),
                     Text(
                       widget.broker.rating.toString(),
-                      style: AppTheme.bodyMedium.copyWith(
+                      style: AppTheme.bodySmall.copyWith(
                         fontWeight: FontWeight.w600,
                         color: AppTheme.textPrimaryColor,
+                        fontSize: 12,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
                     Text(
-                      '(${widget.broker.totalReviews} reviews)',
+                      '(${widget.broker.totalReviews})',
                       style: AppTheme.bodySmall.copyWith(
                         color: AppTheme.textSecondaryColor,
+                        fontSize: 10,
                       ),
                     ),
                   ],

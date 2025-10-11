@@ -53,20 +53,23 @@ class _BrokersScreenState extends ConsumerState<BrokersScreen> {
             // Search Bar
             SliverToBoxAdapter(
               child: Container(
-                padding: const EdgeInsets.all(AppTheme.spacing16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacing16,
+                  vertical: AppTheme.spacing12,
+                ),
                 color: AppTheme.surfaceColor,
                 child: TextField(
                   controller: _searchController,
                   onChanged: _onSearchChanged,
                   decoration: InputDecoration(
-                    hintText: 'Search brokers by name, specialization, or location...',
-                    hintStyle: AppTheme.bodyMedium.copyWith(
+                    hintText: 'Search brokers...',
+                    hintStyle: AppTheme.bodySmall.copyWith(
                       color: AppTheme.textSecondaryColor,
                     ),
-                    prefixIcon: const Icon(Icons.search),
+                    prefixIcon: const Icon(Icons.search, size: 20),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear),
+                            icon: const Icon(Icons.clear, size: 20),
                             onPressed: () {
                               _searchController.clear();
                               _onSearchChanged('');
@@ -75,22 +78,26 @@ class _BrokersScreenState extends ConsumerState<BrokersScreen> {
                         : null,
                     filled: true,
                     fillColor: AppTheme.backgroundColor,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacing12,
+                      vertical: AppTheme.spacing10,
+                    ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
                       borderSide: BorderSide(
                         color: AppTheme.thinBorderColor,
                         width: AppTheme.thinBorderWidth,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
                       borderSide: BorderSide(
                         color: AppTheme.thinBorderColor,
                         width: AppTheme.thinBorderWidth,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
                       borderSide: BorderSide(
                         color: AppTheme.primaryColor,
                         width: 2,
@@ -220,11 +227,11 @@ class _BrokersScreenState extends ConsumerState<BrokersScreen> {
                     Stack(
                       children: [
                         CircleAvatar(
-                          radius: 30,
+                          radius: 24,
                           backgroundColor: AppTheme.primaryColor,
                           child: Text(
                             broker.name.substring(0, 1).toUpperCase(),
-                            style: AppTheme.titleMedium.copyWith(
+                            style: AppTheme.bodyMedium.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
@@ -235,15 +242,15 @@ class _BrokersScreenState extends ConsumerState<BrokersScreen> {
                             bottom: 0,
                             right: 0,
                             child: Container(
-                              padding: const EdgeInsets.all(4),
+                              padding: const EdgeInsets.all(3),
                               decoration: BoxDecoration(
                                 color: Colors.green,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: AppTheme.surfaceColor, width: 2),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: AppTheme.surfaceColor, width: 1.5),
                               ),
                               child: const Icon(
                                 Icons.verified,
-                                size: 16,
+                                size: 12,
                                 color: Colors.white,
                               ),
                             ),
@@ -258,32 +265,41 @@ class _BrokersScreenState extends ConsumerState<BrokersScreen> {
                         children: [
                           Text(
                             broker.name,
-                            style: AppTheme.titleMedium.copyWith(
+                            style: AppTheme.bodyMedium.copyWith(
                               fontWeight: FontWeight.w600,
                               color: AppTheme.textPrimaryColor,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 2),
                           Text(
                             broker.specialization,
-                            style: AppTheme.bodyMedium.copyWith(
+                            style: AppTheme.bodySmall.copyWith(
                               color: AppTheme.primaryColor,
                               fontWeight: FontWeight.w600,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 4),
                           Row(
                             children: [
                               Icon(
                                 Icons.location_on,
-                                size: 16,
+                                size: 14,
                                 color: AppTheme.textSecondaryColor,
                               ),
-                              const SizedBox(width: 4),
-                              Text(
-                                broker.location,
-                                style: AppTheme.bodySmall.copyWith(
-                                  color: AppTheme.textSecondaryColor,
+                              const SizedBox(width: 3),
+                              Expanded(
+                                child: Text(
+                                  broker.location,
+                                  style: AppTheme.bodySmall.copyWith(
+                                    color: AppTheme.textSecondaryColor,
+                                    fontSize: 11,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
@@ -300,30 +316,32 @@ class _BrokersScreenState extends ConsumerState<BrokersScreen> {
                           children: [
                             Icon(
                               Icons.star,
-                              size: 16,
+                              size: 14,
                               color: Colors.amber,
                             ),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: 3),
                             Text(
                               broker.rating.toString(),
-                              style: AppTheme.bodyMedium.copyWith(
+                              style: AppTheme.bodySmall.copyWith(
                                 fontWeight: FontWeight.w600,
                                 color: AppTheme.textPrimaryColor,
+                                fontSize: 12,
                               ),
                             ),
                           ],
                         ),
                         Text(
-                          '(${broker.totalReviews} reviews)',
+                          '(${broker.totalReviews})',
                           style: AppTheme.bodySmall.copyWith(
                             color: AppTheme.textSecondaryColor,
+                            fontSize: 10,
                           ),
                         ),
                       ],
                     ),
                   ],
                 ),
-                const SizedBox(height: AppTheme.spacing16),
+                const SizedBox(height: AppTheme.spacing12),
                 // Performance Stats
                 Row(
                   children: [
@@ -353,12 +371,12 @@ class _BrokersScreenState extends ConsumerState<BrokersScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: AppTheme.spacing12),
+                const SizedBox(height: AppTheme.spacing8),
                 // Investment Value
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacing12,
-                    vertical: AppTheme.spacing8,
+                    horizontal: AppTheme.spacing10,
+                    vertical: AppTheme.spacing6,
                   ),
                   decoration: BoxDecoration(
                     color: AppTheme.primaryColor.withOpacity(0.1),
@@ -369,15 +387,20 @@ class _BrokersScreenState extends ConsumerState<BrokersScreen> {
                     children: [
                       Icon(
                         Icons.monetization_on,
-                        size: 16,
+                        size: 14,
                         color: AppTheme.primaryColor,
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Total Value: ${_formatCurrency(broker.totalInvestmentValue)} RWF',
-                        style: AppTheme.bodySmall.copyWith(
-                          color: AppTheme.primaryColor,
-                          fontWeight: FontWeight.w600,
+                      const SizedBox(width: 3),
+                      Flexible(
+                        child: Text(
+                          'Total Value: ${_formatCurrency(broker.totalInvestmentValue)} RWF',
+                          style: AppTheme.bodySmall.copyWith(
+                            color: AppTheme.primaryColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 11,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -393,26 +416,28 @@ class _BrokersScreenState extends ConsumerState<BrokersScreen> {
 
   Widget _buildStatItem(String label, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing8),
+      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing6),
       child: Column(
         children: [
           Icon(
             icon,
-            size: 20,
+            size: 16,
             color: color,
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 3),
           Text(
             value,
-            style: AppTheme.bodyMedium.copyWith(
+            style: AppTheme.bodySmall.copyWith(
               fontWeight: FontWeight.w700,
               color: AppTheme.textPrimaryColor,
+              fontSize: 12,
             ),
           ),
           Text(
             label,
             style: AppTheme.bodySmall.copyWith(
               color: AppTheme.textSecondaryColor,
+              fontSize: 10,
             ),
           ),
         ],
