@@ -51,20 +51,23 @@ class _AdvisorsScreenState extends ConsumerState<AdvisorsScreen> {
             // Search Bar
             SliverToBoxAdapter(
               child: Container(
-                padding: const EdgeInsets.all(AppTheme.spacing16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacing16,
+                  vertical: AppTheme.spacing12,
+                ),
                 color: AppTheme.surfaceColor,
                 child: TextField(
                   controller: _searchController,
                   onChanged: _onSearchChanged,
                   decoration: InputDecoration(
-                    hintText: 'Search advisors by name, specialization, or location...',
-                    hintStyle: AppTheme.bodyMedium.copyWith(
+                    hintText: 'Search advisors...',
+                    hintStyle: AppTheme.bodySmall.copyWith(
                       color: AppTheme.textSecondaryColor,
                     ),
-                    prefixIcon: const Icon(Icons.search),
+                    prefixIcon: const Icon(Icons.search, size: 20),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear),
+                            icon: const Icon(Icons.clear, size: 20),
                             onPressed: () {
                               _searchController.clear();
                               _onSearchChanged('');
@@ -73,22 +76,26 @@ class _AdvisorsScreenState extends ConsumerState<AdvisorsScreen> {
                         : null,
                     filled: true,
                     fillColor: AppTheme.backgroundColor,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacing12,
+                      vertical: AppTheme.spacing10,
+                    ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
                       borderSide: BorderSide(
                         color: AppTheme.thinBorderColor,
                         width: AppTheme.thinBorderWidth,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
                       borderSide: BorderSide(
                         color: AppTheme.thinBorderColor,
                         width: AppTheme.thinBorderWidth,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
                       borderSide: BorderSide(
                         color: AppTheme.primaryColor,
                         width: 2,
@@ -204,11 +211,11 @@ class _AdvisorsScreenState extends ConsumerState<AdvisorsScreen> {
                     Stack(
                       children: [
                         CircleAvatar(
-                          radius: 25,
+                          radius: 20,
                           backgroundColor: AppTheme.primaryColor,
                           child: Text(
                             (advisor['name'] as String).substring(0, 1).toUpperCase(),
-                            style: AppTheme.titleMedium.copyWith(
+                            style: AppTheme.bodyMedium.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
@@ -219,15 +226,15 @@ class _AdvisorsScreenState extends ConsumerState<AdvisorsScreen> {
                             bottom: 0,
                             right: 0,
                             child: Container(
-                              padding: const EdgeInsets.all(3),
+                              padding: const EdgeInsets.all(2),
                               decoration: BoxDecoration(
                                 color: Colors.green,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: AppTheme.surfaceColor, width: 2),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: AppTheme.surfaceColor, width: 1.5),
                               ),
                               child: const Icon(
                                 Icons.verified,
-                                size: 12,
+                                size: 10,
                                 color: Colors.white,
                               ),
                             ),
@@ -242,32 +249,41 @@ class _AdvisorsScreenState extends ConsumerState<AdvisorsScreen> {
                         children: [
                           Text(
                             advisor['name'] as String,
-                            style: AppTheme.titleMedium.copyWith(
+                            style: AppTheme.bodyMedium.copyWith(
                               fontWeight: FontWeight.w600,
                               color: AppTheme.textPrimaryColor,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 2),
                           Text(
                             advisor['specialization'] as String,
-                            style: AppTheme.bodyMedium.copyWith(
+                            style: AppTheme.bodySmall.copyWith(
                               color: AppTheme.primaryColor,
                               fontWeight: FontWeight.w600,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 4),
                           Row(
                             children: [
                               Icon(
                                 Icons.location_on,
-                                size: 14,
+                                size: 12,
                                 color: AppTheme.textSecondaryColor,
                               ),
-                              const SizedBox(width: 4),
-                              Text(
-                                advisor['location'] as String,
-                                style: AppTheme.bodySmall.copyWith(
-                                  color: AppTheme.textSecondaryColor,
+                              const SizedBox(width: 3),
+                              Expanded(
+                                child: Text(
+                                  advisor['location'] as String,
+                                  style: AppTheme.bodySmall.copyWith(
+                                    color: AppTheme.textSecondaryColor,
+                                    fontSize: 11,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
@@ -281,22 +297,24 @@ class _AdvisorsScreenState extends ConsumerState<AdvisorsScreen> {
                       children: [
                         Text(
                           advisor['successRate'] as String,
-                          style: AppTheme.titleMedium.copyWith(
+                          style: AppTheme.bodySmall.copyWith(
                             fontWeight: FontWeight.w700,
                             color: AppTheme.successColor,
+                            fontSize: 12,
                           ),
                         ),
                         Text(
-                          'Success Rate',
+                          'Success',
                           style: AppTheme.bodySmall.copyWith(
                             color: AppTheme.textSecondaryColor,
+                            fontSize: 10,
                           ),
                         ),
                       ],
                     ),
                   ],
                 ),
-                const SizedBox(height: AppTheme.spacing16),
+                const SizedBox(height: AppTheme.spacing12),
                 // Advisor Stats
                 Row(
                   children: [
@@ -310,7 +328,7 @@ class _AdvisorsScreenState extends ConsumerState<AdvisorsScreen> {
                     ),
                     Expanded(
                       child: _buildStatItem(
-                        'Clients Helped',
+                        'Clients',
                         advisor['clientsHelped'] as String,
                         Icons.people,
                         Colors.green,
@@ -410,26 +428,28 @@ class _AdvisorsScreenState extends ConsumerState<AdvisorsScreen> {
 
   Widget _buildStatItem(String label, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing8),
+      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing6),
       child: Column(
         children: [
           Icon(
             icon,
-            size: 18,
+            size: 16,
             color: color,
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 3),
           Text(
             value,
-            style: AppTheme.bodyMedium.copyWith(
+            style: AppTheme.bodySmall.copyWith(
               fontWeight: FontWeight.w700,
               color: AppTheme.textPrimaryColor,
+              fontSize: 12,
             ),
           ),
           Text(
             label,
             style: AppTheme.bodySmall.copyWith(
               color: AppTheme.textSecondaryColor,
+              fontSize: 10,
             ),
           ),
         ],

@@ -51,20 +51,23 @@ class _BusinessesScreenState extends ConsumerState<BusinessesScreen> {
             // Search Bar
             SliverToBoxAdapter(
               child: Container(
-                padding: const EdgeInsets.all(AppTheme.spacing16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacing16,
+                  vertical: AppTheme.spacing12,
+                ),
                 color: AppTheme.surfaceColor,
                 child: TextField(
                   controller: _searchController,
                   onChanged: _onSearchChanged,
                   decoration: InputDecoration(
-                    hintText: 'Search businesses by name, industry, or location...',
-                    hintStyle: AppTheme.bodyMedium.copyWith(
+                    hintText: 'Search businesses...',
+                    hintStyle: AppTheme.bodySmall.copyWith(
                       color: AppTheme.textSecondaryColor,
                     ),
-                    prefixIcon: const Icon(Icons.search),
+                    prefixIcon: const Icon(Icons.search, size: 20),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear),
+                            icon: const Icon(Icons.clear, size: 20),
                             onPressed: () {
                               _searchController.clear();
                               _onSearchChanged('');
@@ -73,22 +76,26 @@ class _BusinessesScreenState extends ConsumerState<BusinessesScreen> {
                         : null,
                     filled: true,
                     fillColor: AppTheme.backgroundColor,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacing12,
+                      vertical: AppTheme.spacing10,
+                    ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
                       borderSide: BorderSide(
                         color: AppTheme.thinBorderColor,
                         width: AppTheme.thinBorderWidth,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
                       borderSide: BorderSide(
                         color: AppTheme.thinBorderColor,
                         width: AppTheme.thinBorderWidth,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.borderRadius12),
+                      borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
                       borderSide: BorderSide(
                         color: AppTheme.primaryColor,
                         width: 2,
@@ -199,11 +206,11 @@ class _BusinessesScreenState extends ConsumerState<BusinessesScreen> {
                     Stack(
                       children: [
                         CircleAvatar(
-                          radius: 25,
+                          radius: 20,
                           backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
                           child: Text(
                             (business['name'] as String).substring(0, 1).toUpperCase(),
-                            style: AppTheme.titleMedium.copyWith(
+                            style: AppTheme.bodyMedium.copyWith(
                               color: AppTheme.primaryColor,
                               fontWeight: FontWeight.bold,
                             ),
@@ -214,15 +221,15 @@ class _BusinessesScreenState extends ConsumerState<BusinessesScreen> {
                             bottom: 0,
                             right: 0,
                             child: Container(
-                              padding: const EdgeInsets.all(3),
+                              padding: const EdgeInsets.all(2),
                               decoration: BoxDecoration(
                                 color: Colors.green,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: AppTheme.surfaceColor, width: 2),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: AppTheme.surfaceColor, width: 1.5),
                               ),
                               child: const Icon(
                                 Icons.verified,
-                                size: 12,
+                                size: 10,
                                 color: Colors.white,
                               ),
                             ),
@@ -237,32 +244,41 @@ class _BusinessesScreenState extends ConsumerState<BusinessesScreen> {
                         children: [
                           Text(
                             business['name'] as String,
-                            style: AppTheme.titleMedium.copyWith(
+                            style: AppTheme.bodyMedium.copyWith(
                               fontWeight: FontWeight.w600,
                               color: AppTheme.textPrimaryColor,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 2),
                           Text(
                             business['industry'] as String,
-                            style: AppTheme.bodyMedium.copyWith(
+                            style: AppTheme.bodySmall.copyWith(
                               color: AppTheme.primaryColor,
                               fontWeight: FontWeight.w600,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 4),
                           Row(
                             children: [
                               Icon(
                                 Icons.location_on,
-                                size: 14,
+                                size: 12,
                                 color: AppTheme.textSecondaryColor,
                               ),
-                              const SizedBox(width: 4),
-                              Text(
-                                business['location'] as String,
-                                style: AppTheme.bodySmall.copyWith(
-                                  color: AppTheme.textSecondaryColor,
+                              const SizedBox(width: 3),
+                              Expanded(
+                                child: Text(
+                                  business['location'] as String,
+                                  style: AppTheme.bodySmall.copyWith(
+                                    color: AppTheme.textSecondaryColor,
+                                    fontSize: 11,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
@@ -273,27 +289,28 @@ class _BusinessesScreenState extends ConsumerState<BusinessesScreen> {
                     // Stage Badge
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: AppTheme.spacing8,
-                        vertical: AppTheme.spacing4,
+                        horizontal: AppTheme.spacing6,
+                        vertical: AppTheme.spacing3,
                       ),
                       decoration: BoxDecoration(
                         color: AppTheme.primaryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
+                        borderRadius: BorderRadius.circular(AppTheme.borderRadius6),
                       ),
                       child: Text(
                         business['stage'] as String,
                         style: AppTheme.bodySmall.copyWith(
                           color: AppTheme.primaryColor,
                           fontWeight: FontWeight.w600,
+                          fontSize: 10,
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: AppTheme.spacing16),
+                const SizedBox(height: AppTheme.spacing12),
                 // Funding Details
                 Container(
-                  padding: const EdgeInsets.all(AppTheme.spacing12),
+                  padding: const EdgeInsets.all(AppTheme.spacing10),
                   decoration: BoxDecoration(
                     color: AppTheme.primaryColor.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
@@ -393,21 +410,23 @@ class _BusinessesScreenState extends ConsumerState<BusinessesScreen> {
       children: [
         Icon(
           icon,
-          size: 18,
+          size: 16,
           color: color,
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 3),
         Text(
           value,
-          style: AppTheme.bodyMedium.copyWith(
+          style: AppTheme.bodySmall.copyWith(
             fontWeight: FontWeight.w700,
             color: AppTheme.textPrimaryColor,
+            fontSize: 12,
           ),
         ),
         Text(
           label,
           style: AppTheme.bodySmall.copyWith(
             color: AppTheme.textSecondaryColor,
+            fontSize: 10,
           ),
         ),
       ],
