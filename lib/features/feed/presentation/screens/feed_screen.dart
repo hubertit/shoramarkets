@@ -76,7 +76,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   }
 
   Widget _buildLoadingSkeleton() {
-    return Container(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(AppTheme.spacing16),
       child: Column(
         children: List.generate(3, (index) => Container(
@@ -122,7 +122,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
               ),
               const SizedBox(height: AppTheme.spacing16),
               Container(
-                height: 200,
+                height: 150, // Reduced from 200 to 150
                 width: double.infinity,
                 color: AppTheme.thinBorderColor,
               ),
