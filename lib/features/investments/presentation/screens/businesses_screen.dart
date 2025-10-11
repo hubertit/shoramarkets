@@ -346,60 +346,6 @@ class _BusinessesScreenState extends ConsumerState<BusinessesScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: AppTheme.spacing12),
-                // Action Buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          _showContactDialog(business);
-                        },
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(
-                            color: AppTheme.thinBorderColor,
-                            width: AppTheme.thinBorderWidth,
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-                          ),
-                        ),
-                        child: Text(
-                          'Contact',
-                          style: AppTheme.bodySmall.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: AppTheme.textPrimaryColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: AppTheme.spacing8),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close dialog
-                          _navigateToBusinessProfile(business);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryColor,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: AppTheme.spacing8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppTheme.borderRadius8),
-                          ),
-                        ),
-                        child: Text(
-                          'View Details',
-                          style: AppTheme.bodySmall.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),
