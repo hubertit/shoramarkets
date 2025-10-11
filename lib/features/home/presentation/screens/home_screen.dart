@@ -161,6 +161,9 @@ class _DashboardTabState extends State<_DashboardTab> with SingleTickerProviderS
           unselectedLabelColor: Colors.white.withOpacity(0.7),
           labelStyle: AppTheme.bodySmall.copyWith(fontWeight: FontWeight.w600),
           unselectedLabelStyle: AppTheme.bodySmall.copyWith(fontWeight: FontWeight.w400),
+          tabAlignment: TabAlignment.fill,
+          isScrollable: false,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           tabs: const [
             Tab(text: 'Opportunities'),
             Tab(text: 'Brokers'),
